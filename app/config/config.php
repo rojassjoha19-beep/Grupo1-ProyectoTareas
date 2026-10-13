@@ -9,13 +9,13 @@ define('DB_NAME', 'db_tareas');
 define('RUTA_APP', dirname(dirname(__FILE__)));
 // Ruta url
 
-define('RUTA_URL', 'http://localhost/proyecto-tareas');
+define('RUTA_URL', 'http://localhost/Grupo1-ProyectoTareas/public');
 
 // Ruta de los recursos públicos
 
 
 // Rutas que se usan para guardar imágenes
-define('RUTA_AVATAR', '/proyecto-tareas/public/img/avatar/');
+define('RUTA_AVATAR', '/Grupo1-ProyectoTareas/public/img/avatar/');
 define('NOMBRESITIO', 'Administrador de tareas');
 
 

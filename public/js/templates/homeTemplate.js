@@ -6,7 +6,7 @@ export const homeTemplate = () => `
             Gestor de Tareas
         </a>
         <div class="ms-auto">
-            <a class="btn btn-outline-primary" href="/proyecto-tareas/login" data-link>
+            <a class="btn btn-outline-primary" href="/Grupo1-ProyectoTareas/login" data-link>
                 Ingresar
             </a>
         </div>
@@ -47,7 +47,7 @@ export const homeTemplate = () => `
                 <div class="col-lg-7">
                     <div class="hero-image">
                         <img 
-                            src="/proyecto-tareas/public/img/tareas_landing.jpg" 
+                            src="/Grupo1-ProyectoTareas/public/img/tareas_landing.jpg" 
                             class="img-fluid rounded-4 shadow" 
                             alt="Gestión de tareas"
                         >
