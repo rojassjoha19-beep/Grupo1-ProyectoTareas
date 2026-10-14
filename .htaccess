@@ -1,0 +1,17 @@
+DirectoryIndex public/index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /Grupo1-ProyectoTareas/
+
+    # Raíz del proyecto
+    RewriteRule ^$ public/index.php [L]
+
+    # Todo lo que existe dentro de public se sirve desde public
+    RewriteCond %{DOCUMENT_ROOT}/Grupo1-ProyectoTareas/public/$1 -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/Grupo1-ProyectoTareas/public/$1 -d
+    RewriteRule ^(.+)$ public/$1 [L]
+
+    # Rutas virtuales de la SPA
+    RewriteRule ^(.+)$ public/index.php [L]
+</IfModule>

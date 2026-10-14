@@ -14,7 +14,7 @@ export const renderDashboard = async (container) => {
         const response = await authService.checkSession();
 
         if (!response.success || !response.user) {
-            window.location.href = "/proyecto-tareas/login";
+            window.location.href = "/Grupo1-ProyectoTareas/login";
             return;
         }
 
@@ -48,7 +48,7 @@ export const renderDashboard = async (container) => {
 
                     if (logoutResponse.success) {
                         window.location.href =
-                            "/proyecto-tareas/login";
+                            "/Grupo1-ProyectoTareas/login";
                     }
                 } catch (error) {
                     console.error(

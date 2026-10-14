@@ -20,7 +20,7 @@ const routes = {
 
 const getNormalizedPath = () => {
   const path = window.location.pathname;
-  const basePath = "/proyecto-tareas";
+  const basePath = "/Grupo1-ProyectoTareas"; 
 
   if (path.startsWith(basePath)) {
     const route = path.replace(basePath, "");
@@ -54,7 +54,7 @@ export const router = {
   },
 
   navigateTo: (url) => {
-    const basePath = "/proyecto-tareas";
+    const basePath = "/Grupo1-ProyectoTareas";
 
     const targetUrl = url.startsWith(basePath)
       ? url
