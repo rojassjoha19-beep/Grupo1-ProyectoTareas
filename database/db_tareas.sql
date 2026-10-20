@@ -17,14 +17,14 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
+
 CREATE DATABASE IF NOT EXISTS `db_tareas`
   DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `db_tareas`;
+--
 -- Base de datos: `db_tareas`
 --
 
--- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `estado`
@@ -50,7 +50,7 @@ INSERT INTO `estado` (`id_estado`, `tipoEstado`, `color`) VALUES
 (3, 'Finished', '#1cc88a'),
 (4, 'Expired', '#e74a3b');
 
--- --------------------------------------------------------
+-- 
 -- Estructura de tabla para la tabla `usuario`
 
 CREATE TABLE `usuario` (
@@ -67,9 +67,7 @@ CREATE TABLE `usuario` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
----- --------------------------------------------------------
 
---
 
 -- Estructura de tabla para la tabla `equipo`
 
@@ -81,7 +79,7 @@ CREATE TABLE equipo (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 --
 
--- ------------------------------------------------------------
+-- Estructura de tabla para la tabla `equipo_usuario`
 CREATE TABLE `equipo_usuario` (
   `equipo_id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
