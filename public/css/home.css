@@ -1,56 +1,51 @@
-
-/* Colores principales */
-:root {
-    --verde-principal: #2F9E52;
-    --verde-icono: #3AB06A;
-    --verde-fondo: #CDE6C4;
-
-    --amarillo-principal: #FFD369;
-    --amarillo-claro: #FFE9A8;
-    --amarillo-logo: #F5C842;
-
-    --fondo-tarjeta: #F4F6FB;
-    --blanco: #FFFFFF;
-    --titulo: #1B2030;
-    --texto: #4A4F5E;
-    --texto-secundario: #9AA0AD;
-
-    --naranja: #F28C38;
-}
-
-/* Diseño general */
+/* ===== Diseño general ===== */
 .home-page {
-    background-color: var(--verde-fondo);
-    color: var(--texto);
+    background-color: #DDF1DC;
+    color: #4A4F5E;
     font-family: Arial, sans-serif;
 }
 
-/* Barra de navegación */
+/* ===== Barra de navegación ===== */
 .home-page .navbar {
-    background-color: var(--blanco);
+    background-color: #FFFFFF;
     padding: 18px 0;
 }
 
 .home-page .navbar-brand {
-    color: var(--titulo);
+    color: #2B3150;
 }
 
-/* Presentación */
+.home-page .navbar-brand i {
+    color: #5FBF86;
+}
+
+/* ===== Presentación ===== */
 .home-page .presentacion {
-    background-color: var(--amarillo-claro);
+    background-color: #FFFBEA;
 }
 
 .home-page .presentacion h1 {
-    color: var(--titulo);
+    color: #2B3150;
 }
 
 .home-page .presentacion h1 span {
-    color: var(--verde-principal);
+    color: #3F9C6B;
 }
 
 .home-page .presentacion p {
-    color: var(--texto);
+    color: #4A4F5E;
     line-height: 1.7;
+}
+
+.home-page .presentacion p i {
+    color: #5FBF86;
+}
+
+/* Etiqueta superior */
+.home-page .badge {
+    background-color: #CDEBD3;
+    color: #2D7A52;
+    font-weight: 600;
 }
 
 /* Imagen principal */
@@ -62,75 +57,97 @@
     border-radius: 20px;
 }
 
-/* Botones */
+/* ===== Botones ===== */
 .home-page .btn-success {
-    background-color: var(--verde-principal);
-    border-color: var(--verde-principal);
-    color: var(--blanco);
+    background-color: #8FD3A8;
+    border-color: #8FD3A8;
+    color: #1F4D36;
 }
 
 .home-page .btn-success:hover {
-    background-color: var(--verde-icono);
-    border-color: var(--verde-icono);
+    background-color: #7BC794;
+    border-color: #7BC794;
+    color: #1F4D36;
 }
 
 .home-page .btn-outline-success {
-    background-color: var(--blanco);
-    color: var(--verde-principal);
-    border-color: var(--verde-principal);
+    background-color: #FFFFFF;
+    color: #2D7A52;
+    border-color: #8FD3A8;
 }
 
 .home-page .btn-outline-success:hover {
-    background-color: var(--verde-principal);
-    border-color: var(--verde-principal);
-    color: var(--blanco);
+    background-color: #8FD3A8;
+    border-color: #8FD3A8;
+    color: #1F4D36;
 }
 
-/* Sección de características */
+.home-page .btn:focus-visible {
+    outline: 3px solid #2B3150;
+    outline-offset: 2px;
+}
+
+/* ===== Sección de características ===== */
 .home-page .caracteristicas {
-    background-color: var(--fondo-tarjeta);
+    background-color: #F6F7FC;
 }
 
 .home-page .subtitulo {
-    color: var(--verde-principal);
+    color: #3F9C6B;
     font-weight: bold;
 }
 
 .home-page .caracteristicas h2 {
-    color: var(--titulo);
+    color: #2B3150;
 }
 
 .home-page .caracteristicas p {
-    color: var(--texto);
+    color: #4A4F5E;
 }
 
 /* Tarjetas */
 .home-page .caracteristicas .card {
     height: 100%;
-    border: 1px solid var(--verde-fondo);
+    border: 1px solid #D7EEDA;
     border-radius: 16px;
-    background-color: var(--blanco);
+    background-color: #FFFFFF;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .home-page .caracteristicas .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(27, 32, 48, 0.12);
+    box-shadow: 0 8px 20px rgba(43, 49, 80, 0.10);
 }
 
-/* Iconos de las tarjetas */
+.home-page .caracteristicas .card h3 {
+    color: #2B3150;
+}
+
+/* Iconos de las tarjetas (un color pastel distinto en cada una) */
 .home-page .icono-tarjeta {
-    color: var(--verde-icono);
+    color: #6CC48A;
     font-size: 2rem;
 }
 
-/* Pie de página */
-.home-page .pie-pagina {
-    background-color: var(--titulo);
-    color: var(--blanco);
+.home-page .caracteristicas .row > div:nth-child(2) .icono-tarjeta {
+    color: #F2A97B;
 }
 
-/* Adaptación a celulares */
+.home-page .caracteristicas .row > div:nth-child(3) .icono-tarjeta {
+    color: #8E9AE6;
+}
+
+.home-page .caracteristicas .row > div:nth-child(4) .icono-tarjeta {
+    color: #E58FA8;
+}
+
+/* ===== Pie de página ===== */
+.home-page .pie-pagina {
+    background-color: #E6E9F7;
+    color: #4A4F5E;
+}
+
+/* ===== Adaptación a celulares ===== */
 @media (max-width: 767.98px) {
     .home-page .presentacion {
         text-align: center;
@@ -154,3 +171,13 @@
     }
 }
 
+/* Respeta a quienes prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .home-page .caracteristicas .card {
+        transition: none;
+    }
+
+    .home-page .caracteristicas .card:hover {
+        transform: none;
+    }
+}
