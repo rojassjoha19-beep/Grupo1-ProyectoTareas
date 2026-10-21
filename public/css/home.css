@@ -1,113 +1,156 @@
-.home-page {
-background-color: #FFFFFF;
-color: #26352F;
-font-family: Arial, sans-serif;
+
+/* Colores principales */
+:root {
+    --verde-principal: #2F9E52;
+    --verde-icono: #3AB06A;
+    --verde-fondo: #CDE6C4;
+
+    --amarillo-principal: #FFD369;
+    --amarillo-claro: #FFE9A8;
+    --amarillo-logo: #F5C842;
+
+    --fondo-tarjeta: #F4F6FB;
+    --blanco: #FFFFFF;
+    --titulo: #1B2030;
+    --texto: #4A4F5E;
+    --texto-secundario: #9AA0AD;
+
+    --naranja: #F28C38;
 }
+
+/* Diseño general */
+.home-page {
+    background-color: var(--verde-fondo);
+    color: var(--texto);
+    font-family: Arial, sans-serif;
+}
+
 /* Barra de navegación */
 .home-page .navbar {
-background-color: #FFFFFF;
-padding: 18px 0;
+    background-color: var(--blanco);
+    padding: 18px 0;
 }
 
 .home-page .navbar-brand {
-color: #216650;
+    color: var(--titulo);
 }
 
- /* Presentacion */
- .home-page .presentacion {
-background-color: #E8F8F0;
+/* Presentación */
+.home-page .presentacion {
+    background-color: var(--amarillo-claro);
 }
 
 .home-page .presentacion h1 {
-color: #26352F;
+    color: var(--titulo);
 }
 
 .home-page .presentacion h1 span {
-color: #3A9B78;
+    color: var(--verde-principal);
 }
 
 .home-page .presentacion p {
-line-height: 1.7;
+    color: var(--texto);
+    line-height: 1.7;
 }
+
 /* Imagen principal */
 .home-page .hero-image img,
 .home-page .imagen-principal img {
-width: 100%;
-height: auto;
-display: block;
-border-radius: 20px;
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 20px;
 }
 
-/* botones */
+/* Botones */
 .home-page .btn-success {
-background-color: #3A9B78;
-border-color: #3A9B78;
+    background-color: var(--verde-principal);
+    border-color: var(--verde-principal);
+    color: var(--blanco);
 }
 
-home-page .btn-success {
-background-color: #216650;
-border-color: #216650;
-}
-.home-page .btn-outline-success {
-color: #3A9B78;
-border-color: #3A9B78;
+.home-page .btn-success:hover {
+    background-color: var(--verde-icono);
+    border-color: var(--verde-icono);
 }
 
 .home-page .btn-outline-success {
-background-color: #3A9B78;
-border-color: #3A9B78;
-color: #FFFFFF;
+    background-color: var(--blanco);
+    color: var(--verde-principal);
+    border-color: var(--verde-principal);
+}
+
+.home-page .btn-outline-success:hover {
+    background-color: var(--verde-principal);
+    border-color: var(--verde-principal);
+    color: var(--blanco);
 }
 
 /* Sección de características */
 .home-page .caracteristicas {
-background-color: #FFFFFF;
+    background-color: var(--fondo-tarjeta);
 }
 
 .home-page .subtitulo {
-color: #3A9B78;
-font-weight: bold;
-}
-/* Tarjetas */
-.home-page .caracteristicas .card {
-height: 100%;
-border: 1px solid #D5F1E3;
-border-radius: 16px;
-background-color: #FFFFFF;
-transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: var(--verde-principal);
+    font-weight: bold;
 }
 
+.home-page .caracteristicas h2 {
+    color: var(--titulo);
+}
+
+.home-page .caracteristicas p {
+    color: var(--texto);
+}
+
+/* Tarjetas */
 .home-page .caracteristicas .card {
-transform: translateY(-5px);
-box-shadow: 0 8px 20px rgba(23, 91, 73, 0.12);
+    height: 100%;
+    border: 1px solid var(--verde-fondo);
+    border-radius: 16px;
+    background-color: var(--blanco);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-page .caracteristicas .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(27, 32, 48, 0.12);
 }
 
 /* Iconos de las tarjetas */
 .home-page .icono-tarjeta {
-color: #3A9B78;
-font-size: 2rem;
+    color: var(--verde-icono);
+    font-size: 2rem;
 }
+
+/* Pie de página */
+.home-page .pie-pagina {
+    background-color: var(--titulo);
+    color: var(--blanco);
+}
+
+/* Adaptación a celulares */
 @media (max-width: 767.98px) {
+    .home-page .presentacion {
+        text-align: center;
+    }
 
-.home-page .presentacion {
-    text-align: center;
+    .home-page .presentacion .d-flex {
+        justify-content: center;
+    }
+
+    .home-page .presentacion h1 {
+        font-size: 2.3rem;
+    }
+
+    .home-page .hero-image,
+    .home-page .imagen-principal {
+        margin-top: 15px;
+    }
+
+    .home-page .caracteristicas .card {
+        margin-bottom: 5px;
+    }
 }
 
-.home-page .presentacion .d-flex {
-    justify-content: center;
-}
-
-.home-page .presentacion h1 {
-    font-size: 2.3rem;
-}
-
-.home-page .hero-image,
-.home-page .imagen-principal {
-    margin-top: 15px;
-}
-
-.home-page .caracteristicas .card {
-    margin-bottom: 5px;
-}
-
-}
