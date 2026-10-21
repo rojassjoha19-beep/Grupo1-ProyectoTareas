@@ -34,7 +34,7 @@ class AuthModel {
 
 	public function buscar_por_mail($data)
 	{
-		$this->db->query("SELECT id, nombre, email, avatar, aes_decrypt(pass, 'keyword') AS pass 
+		$this->db->query("SELECT id, nombre,apellido, email,rol, avatar, aes_decrypt(pass, 'keyword') AS pass 
 							  FROM usuario
 							  WHERE usuario.email =:email
 							  AND deleted_at IS NULL");
@@ -43,6 +43,12 @@ class AuthModel {
 		$result = $this->db->register();
 		return $result;
 	}
+
+
+
+
+
+
 
 	public function change_pass($pass, $email)
 	{
@@ -61,6 +67,8 @@ class AuthModel {
 			return false;
 		}
 	}
+
+
 
 	
 }
