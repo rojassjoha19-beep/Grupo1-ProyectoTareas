@@ -58,7 +58,7 @@ class Routes
         );
 
         // Remover subcarpeta base del proyecto si existe
-        $basePath = '/Grupo1-ProyectoTareas/public';
+        $basePath = '/Grupo1-ProyectoTareas';
 
         if (strpos($requestUri, $basePath) === 0) {
             $requestUri = substr(

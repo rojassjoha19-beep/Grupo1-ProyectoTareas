@@ -9,7 +9,7 @@ define('DB_NAME', 'db_tareas');
 define('RUTA_APP', dirname(dirname(__FILE__)));
 // Ruta url
 
-define('RUTA_URL', 'http://localhost/Grupo1-ProyectoTareas/public');
+define('RUTA_URL', 'http://localhost/Grupo1-ProyectoTareas');
 
 // Ruta de los recursos públicos
 
