@@ -1,4 +1,6 @@
 export const homeTemplate = () => `
+ <link rel="stylesheet" href="/Grupo1-ProyectoTareas/public/css/home.css">
+  <div class="home-page">
 <!-- Navegación -->
 <nav class="navbar bg-white">
     <div class="container">
@@ -65,7 +67,7 @@ export const homeTemplate = () => `
                 <div class="col-lg-6">
                     <div class="hero-image">
                         <img 
-                            src="/Grupo1-ProyectoTareas/public/img/ilustracion_chica_tareas.png"
+                            src="/Grupo1-ProyectoTareas/public/img/Imagen_Inicial.png"
                             class="img-fluid rounded-4 shadow" 
                             alt="Gestión de tareas"
                         >
