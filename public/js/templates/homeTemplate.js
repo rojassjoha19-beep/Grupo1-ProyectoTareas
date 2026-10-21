@@ -74,5 +74,117 @@ export const homeTemplate = () => `
             </div>
         </div>
     </section>
+    <section class="caracteristicas py-5" id="caracteristicas">
+            <div class="container">
+
+                <!-- Título de la sección -->
+                <div class="text-center mb-5">
+
+                    <span class="subtitulo">
+                        Nuestras herramientas
+                    </span>
+
+                    <h2 class="fw-bold mt-2">
+                        Todo lo que necesitás para organizarte
+                    </h2>
+
+                    <p class="mt-3">
+                        Herramientas simples para mejorar tu productividad.
+                    </p>
+
+                </div>
+             <!-- Tarjetas -->
+                <div class="row g-4">
+
+                    <!-- Tarjeta 1 -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+
+                            <div class="card-body">
+                                <i class="bi bi-list-check icono-tarjeta"></i>
+
+                                <h3 class="h5 fw-bold mt-3">
+                                    Organización
+                                </h3>
+
+                                <p>
+                                    Mantené tus tareas ordenadas y encontrá
+                                    fácilmente tus actividades pendientes.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+            <!-- Tarjeta 2 -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+
+                            <div class="card-body">
+                                <i class="bi bi-calendar-check icono-tarjeta"></i>
+
+                                <h3 class="h5 fw-bold mt-3">
+                                    Priorización
+                                </h3>
+
+                                <p>
+                                    Organizá tus prioridades y planificá
+                                    mejor tus actividades.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                <!-- Tarjeta 3 -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+
+                            <div class="card-body">
+                                <i class="bi bi-graph-up-arrow icono-tarjeta"></i>
+
+                                <h3 class="h5 fw-bold mt-3">
+                                    Seguimiento
+                                </h3>
+
+                                <p>
+                                    Consultá el avance de tus tareas y
+                                    controlá tus pendientes.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+        <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+
+                            <div class="card-body">
+                                <i class="bi bi-people icono-tarjeta"></i>
+
+                                <h3 class="h5 fw-bold mt-3">
+                                    Colaboración
+                                </h3>
+
+                                <p>
+                                    Facilitá la organización de actividades
+                                    y el trabajo en equipo.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </section>
 </main>
+
+       <!-- Pie de página -->
+    <footer class="pie-pagina py-4">
+        <div class="container text-center">
+            <p class="mb-0">
+                Gestor de Tareas · Organizá mejor tu día.
+            </p>
+        </div>
+    </footer>
+
+</div>
 `;
+
