@@ -50,6 +50,101 @@ INSERT INTO `estado` (`id_estado`, `tipoEstado`, `color`) VALUES
 (3, 'Finished', '#1cc88a'),
 (4, 'Expired', '#e74a3b');
 
+-- Tablas rol, permiso y rol_permiso (con sus datos)
+
+
+--
+-- Estructura de tabla para la tabla `rol`
+--
+
+CREATE TABLE `rol` (
+  `id`          int(11)      NOT NULL AUTO_INCREMENT,
+  `nombre`      varchar(50)  NOT NULL,
+  `descripcion` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_rol_nombre` (`nombre`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Estructura de tabla para la tabla `permiso`
+--
+
+CREATE TABLE `permiso` (
+  `id`          int(11)      NOT NULL AUTO_INCREMENT,
+  `nombre`      varchar(50)  NOT NULL,
+  `descripcion` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_permiso_nombre` (`nombre`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Estructura de tabla para la tabla `rol_permiso`
+-- (tabla intermedia: un rol tiene muchos permisos y viceversa)
+--
+
+CREATE TABLE `rol_permiso` (
+  `rol_id`     int(11) NOT NULL,
+  `permiso_id` int(11) NOT NULL,
+  PRIMARY KEY (`rol_id`, `permiso_id`),
+  KEY `idx_rp_permiso` (`permiso_id`),
+  CONSTRAINT `fk_rp_rol`     FOREIGN KEY (`rol_id`)     REFERENCES `rol` (`id`),
+  CONSTRAINT `fk_rp_permiso` FOREIGN KEY (`permiso_id`) REFERENCES `permiso` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `rol`
+-- Ids fijos: 1 = Administrador, 2 = Líder, 3 = Miembro
+--
+
+INSERT INTO `rol` (`id`, `nombre`, `descripcion`) VALUES
+(1, 'Administrador', 'Gestiona usuarios, roles y equipos; ve y modifica todas las tareas'),
+(2, 'Líder',         'Gestiona los miembros y las tareas de sus equipos'),
+(3, 'Miembro',       'Ve sus tareas asignadas y cambia su estado');
+
+--
+-- Volcado de datos para la tabla `permiso`
+--
+
+INSERT INTO `permiso` (`nombre`, `descripcion`) VALUES
+('usuarios.ver',       'Ver y buscar usuarios'),
+('usuarios.crear',     'Crear usuarios'),
+('usuarios.editar',    'Editar usuarios y asignar rol'),
+('usuarios.eliminar',  'Desactivar usuarios'),
+('roles.gestionar',    'CRUD de roles'),
+('permisos.gestionar', 'CRUD de permisos y asignación a roles'),
+('equipos.ver',        'Ver equipos'),
+('equipos.crear',      'Crear equipos'),
+('equipos.editar',     'Editar equipos y asignar líder'),
+('equipos.eliminar',   'Eliminar equipos'),
+('equipos.miembros',   'Agregar y quitar miembros de un equipo'),
+('tareas.ver',         'Ver tareas'),
+('tareas.crear',       'Crear y asignar tareas'),
+('tareas.editar',      'Editar tareas'),
+('tareas.eliminar',    'Eliminar tareas'),
+('tareas.estado',      'Cambiar el estado de una tarea'),
+('estadisticas.ver',   'Ver dashboard y estadísticas');
+
+--
+-- Volcado de datos para la tabla `rol_permiso`
+--
+
+-- Administrador: todos los permisos
+INSERT INTO `rol_permiso` (`rol_id`, `permiso_id`)
+SELECT r.id, p.id FROM `rol` r CROSS JOIN `permiso` p
+WHERE r.nombre = 'Administrador';
+
+-- Líder
+INSERT INTO `rol_permiso` (`rol_id`, `permiso_id`)
+SELECT r.id, p.id FROM `rol` r CROSS JOIN `permiso` p
+WHERE r.nombre = 'Líder' AND p.nombre IN
+('usuarios.ver','equipos.ver','equipos.miembros','tareas.ver','tareas.crear',
+ 'tareas.editar','tareas.eliminar','tareas.estado','estadisticas.ver');
+
+-- Miembro
+INSERT INTO `rol_permiso` (`rol_id`, `permiso_id`)
+SELECT r.id, p.id FROM `rol` r CROSS JOIN `permiso` p
+WHERE r.nombre = 'Miembro' AND p.nombre IN
+('equipos.ver','tareas.ver','tareas.estado');
 -- 
 -- Estructura de tabla para la tabla `usuario`
 
@@ -60,13 +155,14 @@ CREATE TABLE `usuario` (
   `avatar` varchar(255) NOT NULL,
   `email` varchar(50) NOT NULL,
   `pass` blob NOT NULL,
-  `rol` ENUM('empleado','lider') NOT NULL DEFAULT 'empleado',
+  `rol_id` int(11) NOT NULL DEFAULT 3,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-    PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_usuario_rol` (`rol_id`),
+  CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`rol_id`) REFERENCES `rol` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 
 -- Estructura de tabla para la tabla `equipo`
