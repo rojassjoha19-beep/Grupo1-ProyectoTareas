@@ -1,0 +1,183 @@
+/* ===== Diseño general ===== */
+.home-page {
+    background-color: #DDF1DC;
+    color: #4A4F5E;
+    font-family: Arial, sans-serif;
+}
+
+/* ===== Barra de navegación ===== */
+.home-page .navbar {
+    background-color: #FFFFFF;
+    padding: 18px 0;
+}
+
+.home-page .navbar-brand {
+    color: #2B3150;
+}
+
+.home-page .navbar-brand i {
+    color: #5FBF86;
+}
+
+/* ===== Presentación ===== */
+.home-page .presentacion {
+    background-color: #FFFBEA;
+}
+
+.home-page .presentacion h1 {
+    color: #2B3150;
+}
+
+.home-page .presentacion h1 span {
+    color: #3F9C6B;
+}
+
+.home-page .presentacion p {
+    color: #4A4F5E;
+    line-height: 1.7;
+}
+
+.home-page .presentacion p i {
+    color: #5FBF86;
+}
+
+/* Etiqueta superior */
+.home-page .badge {
+    background-color: #CDEBD3;
+    color: #2D7A52;
+    font-weight: 600;
+}
+
+/* Imagen principal */
+.home-page .hero-image img,
+.home-page .imagen-principal img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 20px;
+}
+
+/* ===== Botones ===== */
+.home-page .btn-success {
+    background-color: #8FD3A8;
+    border-color: #8FD3A8;
+    color: #1F4D36;
+}
+
+.home-page .btn-success:hover {
+    background-color: #7BC794;
+    border-color: #7BC794;
+    color: #1F4D36;
+}
+
+.home-page .btn-outline-success {
+    background-color: #FFFFFF;
+    color: #2D7A52;
+    border-color: #8FD3A8;
+}
+
+.home-page .btn-outline-success:hover {
+    background-color: #8FD3A8;
+    border-color: #8FD3A8;
+    color: #1F4D36;
+}
+
+.home-page .btn:focus-visible {
+    outline: 3px solid #2B3150;
+    outline-offset: 2px;
+}
+
+/* ===== Sección de características ===== */
+.home-page .caracteristicas {
+    background-color: #F6F7FC;
+}
+
+.home-page .subtitulo {
+    color: #3F9C6B;
+    font-weight: bold;
+}
+
+.home-page .caracteristicas h2 {
+    color: #2B3150;
+}
+
+.home-page .caracteristicas p {
+    color: #4A4F5E;
+}
+
+/* Tarjetas */
+.home-page .caracteristicas .card {
+    height: 100%;
+    border: 1px solid #D7EEDA;
+    border-radius: 16px;
+    background-color: #FFFFFF;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-page .caracteristicas .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(43, 49, 80, 0.10);
+}
+
+.home-page .caracteristicas .card h3 {
+    color: #2B3150;
+}
+
+/* Iconos de las tarjetas (un color pastel distinto en cada una) */
+.home-page .icono-tarjeta {
+    color: #6CC48A;
+    font-size: 2rem;
+}
+
+.home-page .caracteristicas .row > div:nth-child(2) .icono-tarjeta {
+    color: #F2A97B;
+}
+
+.home-page .caracteristicas .row > div:nth-child(3) .icono-tarjeta {
+    color: #8E9AE6;
+}
+
+.home-page .caracteristicas .row > div:nth-child(4) .icono-tarjeta {
+    color: #E58FA8;
+}
+
+/* ===== Pie de página ===== */
+.home-page .pie-pagina {
+    background-color: #E6E9F7;
+    color: #4A4F5E;
+}
+
+/* ===== Adaptación a celulares ===== */
+@media (max-width: 767.98px) {
+    .home-page .presentacion {
+        text-align: center;
+    }
+
+    .home-page .presentacion .d-flex {
+        justify-content: center;
+    }
+
+    .home-page .presentacion h1 {
+        font-size: 2.3rem;
+    }
+
+    .home-page .hero-image,
+    .home-page .imagen-principal {
+        margin-top: 15px;
+    }
+
+    .home-page .caracteristicas .card {
+        margin-bottom: 5px;
+    }
+}
+
+/* Respeta a quienes prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .home-page .caracteristicas .card {
+        transition: none;
+    }
+
+    .home-page .caracteristicas .card:hover {
+        transform: none;
+    }
+}

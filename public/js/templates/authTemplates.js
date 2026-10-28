@@ -1,4 +1,6 @@
 export const loginTemplate = () => `
+<link rel="stylesheet" href="/Grupo1-ProyectoTareas/public/css/auth.css">
+<div class="auth-page">
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-5">
@@ -68,9 +70,12 @@ export const loginTemplate = () => `
         </div>
     </div>
 </div>
+</div>
 `;
 
 export const resetPasswordTemplate = () => `
+<link rel="stylesheet" href="/Grupo1-ProyectoTareas/public/css/auth.css">
+<div class="auth-page">
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-5">
@@ -112,10 +117,13 @@ export const resetPasswordTemplate = () => `
             </div>
         </div>
     </div>
+    </div>
 </div>
 `;
 
 export const registerTemplate = () => `
+<link rel="stylesheet" href="/Grupo1-ProyectoTareas/public/css/auth.css">
+<div class="auth-page">
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-lg-7">
@@ -188,9 +196,12 @@ export const registerTemplate = () => `
         </div>
     </div>
 </div>
+</div>
 `;
 
 export const updatePasswordTemplate = () => `
+<link rel="stylesheet" href="/Grupo1-ProyectoTareas/public/css/auth.css">
+<div class="auth-page">
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-5">
@@ -283,5 +294,6 @@ export const updatePasswordTemplate = () => `
             </div>
         </div>
     </div>
+</div>
 </div>
 `;
