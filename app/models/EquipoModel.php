@@ -11,9 +11,9 @@ class EquipoModel
     }
 
     /**
-     * Obtiene todos los equipos donde pertenece el usuario.
+     * Obtiene todos los equipos donde pertenece el usuario.// terminar 
      */
-    public function buscarEquiposXusuario($id_usuario)
+    public function equiposDelUsuario($id_usuario)
     {
         $this->db->query("SELECT * FROM equipo");
 
@@ -21,12 +21,49 @@ class EquipoModel
     }
 
 
+
+    
     /**
-     * Crea equipo, a partir de usuario-> se convierte en lider de ese equipo
-     * 
+     * Es miembro de equipo .
      */
 
+    public function esMiembro($equipo_id, $usuario_id)
+    {
+        $this->db->query(
+            "SELECT equipo_id
+             FROM equipo_usuario
+               WHERE equipo_id = :equipo_id
+         AND usuario_id = :usuario_id"
+        );
 
+        $this->db->bind('equipo_id', (int)$equipo_id);
+        $this->db->bind('usuario_id', (int)$usuario_id);
+
+        return (bool) $this->db->register();
+    }
+     /**
+     * Es lider de equipo .
+     */
+        public function esLider($equipo_id, $usuario_id)
+    {
+        $this->db->query(
+            "SELECT id
+             FROM equipo
+             WHERE id = :equipo_id
+             AND lider_id = :usuario_id"
+        );
+
+        $this->db->bind('equipo_id', (int)$equipo_id);
+        $this->db->bind('usuario_id', (int)$usuario_id);
+
+        return (bool)$this->db->register();
+    }
+
+
+    /**
+     * Crea equipo, a partir de usuario->tambien insetar lider (ver como se pide en controlador)
+     * cuando 
+     */
 
     public function crearEquipo($id_usuario, $nombre_equipo,$lider_id)
     {
@@ -40,7 +77,7 @@ class EquipoModel
     }
 
 
-    public function buscarEquipos($equipo_id)
+    public function obtenerEquipo($equipo_id)
     {
 
 
@@ -48,3 +85,26 @@ class EquipoModel
 
     
     }
+
+
+    /**
+     * Busca equipo X lider 
+     * 
+     */
+     public function buscarEquiposDeLider ($id_usuario)
+    {        
+         $this->db->query(
+
+             "SELECT
+                    equipo.id AS id_equipo,
+                    equipo.nombre
+                   
+            FROM equipo
+            WHERE equipo.lider_id = :id_usuario
+            ORDER BY equipo.nombre"
+         );
+     $this->db->bind('id_usuario', (int)$id_usuario);
+
+    return $this->db->registers();
+    }
+}
