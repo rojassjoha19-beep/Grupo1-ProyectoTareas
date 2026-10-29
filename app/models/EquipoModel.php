@@ -11,17 +11,29 @@ class EquipoModel
     }
 
     /**
-     * Obtiene todos los equipos donde pertenece el usuario.// terminar 
+     * Obtiene todos los equipos donde pertenece el usuario.
      */
-    public function equiposDelUsuario($id_usuario)
+    public function equiposDelUsuario($usuario_id)
     {
-        $this->db->query("SELECT * FROM equipo");
+        $this->db->query(
+            "SELECT 
+                equipo.id,
+                equipo.nombre,
+                equipo.lider_id,
+                (equipo.lider_id = :id_lider) AS es_lider
+            
+            FROM equipo
+             INNER JOIN equipo_usuario
+                ON equipo_usuario.equipo_id = equipo.id
+             WHERE equipo_usuario.usuario_id = :id_usuario
+             ORDER BY equipo.nombre"
+        );
+
+        $this->db->bind('id_lider', (int)$usuario_id);
+        $this->db->bind('id_usuario', (int)$usuario_id);
 
         return $this->db->registers();
     }
-
-
-
     
     /**
      * Es miembro de equipo .
@@ -41,51 +53,93 @@ class EquipoModel
 
         return (bool) $this->db->register();
     }
+    
      /**
-     * Es lider de equipo .
+     * Es lider, vista general de lider y todos sus equipos 
      */
-        public function esLider($equipo_id, $usuario_id)
-    {
-        $this->db->query(
-            "SELECT id
-             FROM equipo
-             WHERE id = :equipo_id
-             AND lider_id = :usuario_id"
-        );
+    public function esLider($usuario_id)
+        {
+            $this->db->query(
+                "SELECT usuario.id
+                FROM usuario
+                INNER JOIN rol
+                    ON rol.id = usuario.rol_id
+                WHERE usuario.id = :usuario_id
+                AND rol.id = 2
+                AND usuario.deleted_at IS NULL"
+            );
 
-        $this->db->bind('equipo_id', (int)$equipo_id);
-        $this->db->bind('usuario_id', (int)$usuario_id);
+            $this->db->bind('usuario_id', (int)$usuario_id);
 
-        return (bool)$this->db->register();
-    }
-
-
+            return (bool)$this->db->register();
+        }
+     
     /**
-     * Crea equipo, a partir de usuario->tambien insetar lider (ver como se pide en controlador)
-     * cuando 
+     * 
+     * Crear Equipo($nombre, $lider_id): devuelve el id nuevo o false. El líder es quien crea el equipo.
      */
 
-    public function crearEquipo($id_usuario, $nombre_equipo,$lider_id)
+     public function crearEquipo($nombre, $lider_id)
     {
-        $this->db->query("SELECT * FROM equipo
-                          INNER JOIN usuario_equipo ON equipo.id_equipo = usuario_equipo.fk_id_equipo
-                          WHERE usuario_equipo.fk_id_usuario = :id_usuario");
+        try { // atrapa los insert, el START TRANSACTION
+            $this->db->query("START TRANSACTION");
+            $this->db->execute();
 
-        $this->db->bind('id_usuario', $id_usuario);
+            $this->db->query(
+                "INSERT INTO equipo (nombre, lider_id)
+                 VALUES (:nombre, :lider_id)"
+            );
+            $this->db->bind('nombre', $nombre);
+            $this->db->bind('lider_id', (int)$lider_id);
+            $this->db->execute();
 
-        return $this->db->registers();
+            $equipo_id = (int)$this->db->lastId();
+
+            $this->db->query(
+                "INSERT INTO equipo_usuario (equipo_id, usuario_id)
+                 VALUES (:equipo_id, :usuario_id)"
+            );
+            $this->db->bind('equipo_id', $equipo_id);
+            $this->db->bind('usuario_id', (int)$lider_id);
+            $this->db->execute();
+
+            $this->db->query("COMMIT");
+            $this->db->execute();
+
+            return $equipo_id;
+        } catch (PDOException $e) {
+            try {
+                 // ROLLL back si falla conexion - atrapar hasta return .
+                $this->db->query("ROLLBACK");
+                $this->db->execute();
+            } catch (PDOException $e2) {
+               
+            }
+            return false;
+        }
     }
 
-
+    // obetener equipo por id, para mostrarlo en la vista de detalle del equipo 
     public function obtenerEquipo($equipo_id)
     {
+        $this->db->query(
+            "SELECT
+                equipo.id,
+                equipo.nombre,
+                equipo.lider_id,
+                usuario.nombre AS lider_nombre,
+                usuario.apellido AS lider_apellido,
+                usuario.avatar AS lider_avatar
+             FROM equipo
+             INNER JOIN usuario
+                ON usuario.id = equipo.lider_id
+             WHERE equipo.id = :id"
+        );
 
+        $this->db->bind('id', (int)$equipo_id);
 
-
-
-    
+        return $this->db->register();
     }
-
 
     /**
      * Busca equipo X lider 
@@ -106,5 +160,31 @@ class EquipoModel
      $this->db->bind('id_usuario', (int)$id_usuario);
 
     return $this->db->registers();
+    }
+
+
+    /**
+     * Miembros del equipo 
+     */
+    public function obtenerMiembros($equipo_id)
+    {
+        $this->db->query(
+            "SELECT
+                usuario.id,
+                usuario.nombre,
+                usuario.apellido,
+                usuario.email,
+                usuario.avatar
+             FROM equipo_usuario
+             INNER JOIN usuario
+                ON usuario.id = equipo_usuario.usuario_id
+             WHERE equipo_usuario.equipo_id = :id
+             AND usuario.deleted_at IS NULL
+             ORDER BY usuario.nombre"
+        );
+
+        $this->db->bind('id', (int)$equipo_id);
+
+        return $this->db->registers();
     }
 }
