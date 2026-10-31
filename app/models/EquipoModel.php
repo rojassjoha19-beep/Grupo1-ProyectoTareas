@@ -73,7 +73,26 @@ class EquipoModel
 
             return (bool)$this->db->register();
         }
-     
+     /**
+     * Es lider de equipo, puede modifcar tareas y miembros de UN equipo.
+     */
+
+
+    public function esLiderDeEquipo($equipo_id, $usuario_id)
+    {
+        $this->db->query(
+            "SELECT id
+             FROM equipo
+             WHERE id = :equipo_id
+             AND lider_id = :usuario_id"
+        );
+
+        $this->db->bind('equipo_id', (int)$equipo_id);
+        $this->db->bind('usuario_id', (int)$usuario_id);
+
+        return (bool)$this->db->register();
+    }
+
     /**
      * 
      * Crear Equipo($nombre, $lider_id): devuelve el id nuevo o false. El líder es quien crea el equipo.
@@ -140,28 +159,6 @@ class EquipoModel
 
         return $this->db->register();
     }
-
-    /**
-     * Busca equipo X lider 
-     * 
-     */
-     public function buscarEquiposDeLider ($id_usuario)
-    {        
-         $this->db->query(
-
-             "SELECT
-                    equipo.id AS id_equipo,
-                    equipo.nombre
-                   
-            FROM equipo
-            WHERE equipo.lider_id = :id_usuario
-            ORDER BY equipo.nombre"
-         );
-     $this->db->bind('id_usuario', (int)$id_usuario);
-
-    return $this->db->registers();
-    }
-
 
     /**
      * Miembros del equipo 
