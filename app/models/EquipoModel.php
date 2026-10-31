@@ -159,7 +159,7 @@ class EquipoModel
 
         return $this->db->register();
     }
-
+    
     /**
      * Miembros del equipo 
      */
