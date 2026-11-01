@@ -1,5 +1,4 @@
 export const homeTemplate = () => `
- <link rel="stylesheet" href="/Grupo1-ProyectoTareas/public/css/home.css">
   <div class="home-page">
 <!-- Navegación -->
 <nav class="navbar bg-white">

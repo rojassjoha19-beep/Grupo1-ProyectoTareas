@@ -1,5 +1,3 @@
-@import url("./global.css");
-
 /* ===== Diseño general ===== */
 .home-page {
     background-color: #DDF1DC;
@@ -23,7 +21,7 @@
 
 /* ===== Presentación ===== */
 .home-page .presentacion {
-    background-color: #FFFBEA;
+    background-color: var(--color-bg);
 }
 
 .home-page .presentacion h1 {

@@ -1,8 +1,17 @@
+
+/* Importaciones de estilos */
+@import url("./home.css");
+@import url("./dashboard.css");
+@import url("./auth.css");
+@import url("./estilosAdmin.css");
+
+/* Varariables globales */
 :root{
 
 --color-primario: #8FD3A8;
 --color-secundario: #3F9C6B;
 --color-terciario: #1F4D36;
+--color-bg: #FFFBEA;
 
 --fuente-principal: Arial, sans-serif;
 
