@@ -1,8 +1,10 @@
+@import url("./global.css");
+
 /* ===== Diseño general ===== */
 .home-page {
     background-color: #DDF1DC;
     color: #4A4F5E;
-    font-family: Arial, sans-serif;
+    font-family: var(--fuente-principal);
 }
 
 /* ===== Barra de navegación ===== */
@@ -12,11 +14,11 @@
 }
 
 .home-page .navbar-brand {
-    color: #2B3150;
+    color: var(--color-terciario);
 }
 
 .home-page .navbar-brand i {
-    color: #5FBF86;
+    color: var(--color-secundario);
 }
 
 /* ===== Presentación ===== */
@@ -29,7 +31,7 @@
 }
 
 .home-page .presentacion h1 span {
-    color: #3F9C6B;
+    color: var(--color-secundario);
 }
 
 .home-page .presentacion p {
@@ -38,13 +40,13 @@
 }
 
 .home-page .presentacion p i {
-    color: #5FBF86;
+    color: var(--color-secundario);
 }
 
 /* Etiqueta superior */
 .home-page .badge {
     background-color: #CDEBD3;
-    color: #2D7A52;
+    color: var(--color-terciario);
     font-weight: 600;
 }
 
@@ -59,27 +61,27 @@
 
 /* ===== Botones ===== */
 .home-page .btn-success {
-    background-color: #8FD3A8;
-    border-color: #8FD3A8;
-    color: #1F4D36;
+    background-color: var(--color-primario);
+    border-color: var(--color-primario);
+    color: var(--color-terciario);
 }
 
 .home-page .btn-success:hover {
-    background-color: #7BC794;
-    border-color: #7BC794;
-    color: #1F4D36;
+    background-color: var(--color-primario);
+    border-color: var(--color-primario);
+    color: var(--color-terciario);
 }
 
 .home-page .btn-outline-success {
     background-color: #FFFFFF;
-    color: #2D7A52;
-    border-color: #8FD3A8;
+    color: var();
+    border-color: var(--color-primario);
 }
 
 .home-page .btn-outline-success:hover {
-    background-color: #8FD3A8;
-    border-color: #8FD3A8;
-    color: #1F4D36;
+    background-color: var(--color-primario);
+    border-color: var(--color-primario);
+    color: var(--color-terciario);
 }
 
 .home-page .btn:focus-visible {
@@ -93,7 +95,7 @@
 }
 
 .home-page .subtitulo {
-    color: #3F9C6B;
+    color: var(--color-secundario);
     font-weight: bold;
 }
 
