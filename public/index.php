@@ -22,7 +22,12 @@
    $router->post('/api/equipos', ['EquipoController', 'store']);
 
 
-
+   
+      // =========================================================================
+   // RUTAS API REST - USUARIOS
+   // =========================================================================
+   $router->get('/api/usuarios', ['UsuarioController', 'index']);
+   $router->put('/api/usuarios/{id}/rol', ['UsuarioController', 'cambiarRol']);
 
 
 
