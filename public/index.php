@@ -13,6 +13,19 @@
    $router->get('/api/auth/check-session', ['AuthController', 'checkSession']);
    $router->post('/api/auth/logout', ['AuthController', 'logout']);
 
+
+      // =========================================================================
+   // RUTAS API REST - EQUIPOS
+   // =========================================================================
+   $router->get('/api/equipos', ['EquipoController', 'index']);
+   $router->get('/api/equipos/{id}', ['EquipoController', 'show']);
+   $router->post('/api/equipos', ['EquipoController', 'store']);
+
+
+
+
+
+
    // =========================================================================
    // RUTAS API REST - TAREAS Y ESTADOS
    // =========================================================================

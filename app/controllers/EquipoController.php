@@ -51,9 +51,9 @@ class EquipoController extends BaseController
 
 
     /**
-     * GET /api/tareas/{id_tarea}
+     * GET /api/equipos/id
      *
-     * Obtiene el detalle de una tarea.
+     * Obtiene el detalle de un euipo.
      */
     public function show($id = null)
     {
@@ -94,52 +94,57 @@ class EquipoController extends BaseController
     }
 
     /**
-     * POST /api/tareas
+     * POST /api/equipo
      *
-     * Crea una nueva tarea para el usuario autenticado.
+     * Crea una nuevo equipo- el que lo crea es el lider. 
+     * 
      */
     public function store()
-    {/* 
-        $datos = $this->getJsonBody();
-
-        if (empty($_SESSION['user_id'])) {
-            $this->jsonResponse([
+    {
+       $usuario_id = $this->requireSesion();
+        if (!$this->equipoModel->esLider($usuario_id)) {
+               $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => 'Usuario no autenticado.'
-            ], 401);
+                'mensaje' => 'Solo un líder puede crear equipos.'
+            ], 403);
+       
         }
 
-        $data = [
-            'titulo' => trim($datos['titulo'] ?? ''),
-            'descripcion' => trim($datos['descripcion'] ?? ''),
-            'expired_at' => $datos['expired_at'] ?? null,
-            'id_estado' => $datos['id_estado'] ?? 1,
-            'id_usuario' => $_SESSION['user_id']
-        ];
+        $data   = $this->getJsonBody();
 
-        if (empty($data['titulo'])) {
+
+        $nombre = trim((string)($data['nombre'] ?? ''));
+
+        if (empty($data['nombre'])) {
             $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => 'El título es obligatorio.'
+                'mensaje' => 'El nombre del equipo es obligatorio'
             ], 400);
         }
 
-        $creado = $this->tareaModel->altaTarea($data);
+           if (mb_strlen($nombre) > 50) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'El nombre no puede superar los 50 caracteres'
+            ], 400);
+        }
 
-        if ($creado) {
-            $id_tarea = $this->tareaModel->ultimoId();
+         $equipoId = $this->equipoModel->crearEquipo($nombre, $usuario_id);
+
+          if (!$equipoId) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No se pudo crear el equipo'
+            ], 500);
+          }
 
             $this->jsonResponse([
                 'ok' => true,
-                'mensaje' => 'Tarea creada exitosamente.',
-                'id_tarea' => $id_tarea
+                'mensaje' => 'Equipo creado exitosamente.',
+                'id' => $equipo_id
             ], 201);
-        }
 
-        $this->jsonResponse([
-            'ok' => false,
-            'mensaje' => 'No se pudo crear la tarea.'
-        ], 500); */
+        
     }
 
 /**
