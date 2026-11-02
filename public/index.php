@@ -51,6 +51,17 @@
    // Eliminar una tarea por ID
    $router->delete('/api/tareas/{id}', ['TareaController', 'destroy']);
 
+     // =========================================================================
+   // RUTAS API REST - MIEMBROS DE EQUIPO 
+   // =========================================================================
+
+   // Agregar un miembro a un equipo. Solo puede hacerlo el lider (se valida en el controller).
+   $router->post('/api/equipos/{id}/miembros', ['EquipoMiembroController', 'agregar']);
+
+   // Quitar un miembro de un equipo.
+   $router->delete('/api/equipos/{id}/miembros/{usuarioId}', ['EquipoMiembroController', 'quitar']);
+
+
    // Despachar la solicitud
    $router->dispatch();
 ?>
