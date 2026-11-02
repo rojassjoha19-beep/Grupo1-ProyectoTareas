@@ -1,4 +1,3 @@
-
 export const dashboardTemplate = () => `
     <div id="dashboard" class="dashboard-page d-flex min-vh-100">
 
@@ -15,12 +14,14 @@ export const dashboardTemplate = () => `
 
                 <button
                     id="sidebarToggleTop"
-                    class="btn btn-link d-md-none rounded-circle me-3"
+                    class="btn btn-link rounded-circle me-3"
                     type="button"
+                    aria-label="Abrir menú"
+                    aria-controls="dashboardMenu"
+                    aria-expanded="false"
                 >
-                    <i class="bi bi-list"></i>
+                    <i class="bi bi-list fs-4"></i>
                 </button>
-
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item dropdown">
 
