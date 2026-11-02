@@ -1,4 +1,5 @@
 
+import { dashboardMenu } from "../ui/dashboardMenu.js";
 import { dashboardTemplate } from "../templates/dashboardTemplate.js";
 import { authService } from "../services/authService.js";
 import { RUTA_AVATAR } from "../config.js";
@@ -7,10 +8,10 @@ import { getTareas } from "./tareas/getTareas.js";
 import { initFilterTarea } from "./tareas/filterTareas.js";
 import { initUpdateTarea } from "./tareas/updateTarea.js";
 import { initDeleteTarea } from "./tareas/deleteTarea.js";
-export const renderDashboard = async (container) => {
-    container.innerHTML = dashboardTemplate();
 
+export const renderDashboard = async (container) => {
     try {
+        //Comprobar sesión
         const response = await authService.checkSession();
 
         if (!response.success || !response.user) {
@@ -18,33 +19,74 @@ export const renderDashboard = async (container) => {
             return;
         }
 
-        const userName =
-            document.getElementById("dashboardUserName");
+        //Obtener permisos del usuario
+        const permisos = Array.isArray(response.user.permisos)
+            ? response.user.permisos
+            : [];
 
-        const userAvatar =
-            document.getElementById("dashboardUserAvatar");
+        //Renderizar Dashboard
+        container.innerHTML = dashboardTemplate();
 
-        const btnCerrarSesion =
-            document.getElementById("btnCerrarSesion");
+        //Renderizar menú lateral
+        const menuContainer = container.querySelector("#dashboardMenu");
 
-        // Nombre del usuario
+        if (menuContainer) {
+            menuContainer.innerHTML = dashboardMenu(permisos);
+        }
+
+        // Botones para abrir y cerrar el menú
+        const sidebarToggle = container.querySelector("#sidebarToggleTop");
+        const sidebarClose = container.querySelector("#sidebarClose");
+
+        if (sidebarToggle && sidebarClose && menuContainer) {
+
+            // Función que controla el estado del menú
+            const actualizarMenu = (abierto) => {
+                menuContainer.classList.toggle("menu-cerrado", !abierto);
+
+                // Mostrar hamburguesa solamente cuando esté cerrado
+                sidebarToggle.classList.toggle("d-none", abierto);
+
+                sidebarToggle.setAttribute("aria-expanded", String(abierto));
+            };
+
+            // Estado inicial: menú abierto
+            actualizarMenu(true);
+
+            // Abrir menú
+            sidebarToggle.addEventListener("click", () => {
+                actualizarMenu(true);
+            });
+
+            // Cerrar menú
+            sidebarClose.addEventListener("click", () => {
+                actualizarMenu(false);
+            });
+        }
+        
+
+        //Obtener elementos del usuario
+        const userName = container.querySelector("#dashboardUserName");
+        const userAvatar = container.querySelector("#dashboardUserAvatar");
+        const btnCerrarSesion = container.querySelector("#btnCerrarSesion");
+
+        //Nombre del usuario
         if (userName) {
             userName.textContent = response.user.nombre;
         }
 
-        // Avatar
+        //Avatar
         if (userAvatar) {
             userAvatar.src = response.user.avatar
                 ? RUTA_AVATAR + response.user.avatar
                 : RUTA_AVATAR + "img_default.png";
         }
 
-        // Logout
+        //Cerrar sesión
         if (btnCerrarSesion) {
             btnCerrarSesion.addEventListener("click", async () => {
                 try {
-                    const logoutResponse =
-                        await authService.logout();
+                    const logoutResponse = await authService.logout();
 
                     if (logoutResponse.success) {
                         window.location.href =
@@ -53,26 +95,25 @@ export const renderDashboard = async (container) => {
                 } catch (error) {
                     console.error(
                         "Error al cerrar sesión:",
-                        error,
+                        error
                     );
                 }
             });
         }
 
-        // Inicializar creación de tareas
+        //Inicializar funcionalidades de tareas
         initCreateTarea();
         initUpdateTarea();
         initDeleteTarea();
         initFilterTarea();
 
-        // Cargar listado de tareas
+        //Cargar listado de tareas
         await getTareas();
 
     } catch (error) {
         console.error(
-            "Error al cargar la sesión:",
-            error,
+            "Error al cargar el Dashboard:",
+            error
         );
     }
 };
-

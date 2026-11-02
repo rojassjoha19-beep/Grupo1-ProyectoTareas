@@ -47,7 +47,7 @@ export const loginTemplate = () => `
                             <label class="form-check-label small" for="customCheck">Recordame</label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                        <button type="submit" class="btn btn-main w-100 py-2 fw-bold">
                             Ingresar
                         </button>
                     </form>

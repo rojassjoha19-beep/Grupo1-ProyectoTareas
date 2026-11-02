@@ -1,5 +1,4 @@
 export const homeTemplate = () => `
- <link rel="stylesheet" href="/Grupo1-ProyectoTareas/public/css/home.css">
   <div class="home-page">
 <!-- Navegación -->
 <nav class="navbar bg-white">
@@ -45,13 +44,13 @@ export const homeTemplate = () => `
 
     <!-- Botones principales -->
     <div class="d-flex flex-wrap gap-3 mt-4">
-        <a class="btn btn-success btn-lg"
+        <a class="btn btn-main"
            href="/login"
            data-link>
             Comenzar ahora
         </a>
 
-        <a class="btn btn-outline-success btn-lg"
+        <a class="btn btn-outline-success"
            href="#caracteristicas">
             Conocer más
         </a>
