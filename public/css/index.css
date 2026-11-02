@@ -15,5 +15,21 @@
 
 --fuente-principal: Arial, sans-serif;
 
+}
 
+/* Botón principal */
+.btn-main {
+    background-color: var(--color-secundario);
+    border: 1px solid var(--color-secundario);
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-main:hover {
+    background-color: var(--color-terciario);
+    border-color: var(--color-terciario);
+    color: white;
+    transform: translateY(-2px);
 }

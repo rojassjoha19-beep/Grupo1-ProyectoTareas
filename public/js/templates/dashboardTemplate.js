@@ -1,5 +1,6 @@
+
 export const dashboardTemplate = () => `
-    <div id="dashboard" class="d-flex min-vh-100">
+    <div id="dashboard" class="dashboard-page d-flex min-vh-100">
 
         <!-- Menú -->
         <aside id="dashboardMenu">
@@ -7,10 +8,10 @@ export const dashboardTemplate = () => `
         </aside>
 
         <!-- Contenido principal -->
-        <div class="d-flex flex-column flex-grow-1">
+        <div class="dashboard-layout d-flex flex-column flex-grow-1">
 
             <!-- Topbar -->
-            <nav class="navbar navbar-expand navbar-light bg-white shadow-sm px-4">
+            <nav class="dashboard-topbar navbar navbar-expand px-4">
 
                 <button
                     id="sidebarToggleTop"
@@ -21,7 +22,6 @@ export const dashboardTemplate = () => `
                 </button>
 
                 <ul class="navbar-nav ms-auto align-items-center">
-
                     <li class="nav-item dropdown">
 
                         <a
@@ -34,14 +34,14 @@ export const dashboardTemplate = () => `
                         >
                             <span
                                 id="dashboardUserName"
-                               class="me-2 text-secondary small fw-bold"
+                                class="dashboard-user-name me-2 small fw-bold"
                             >
                                 Usuario
                             </span>
 
                             <img
                                 id="dashboardUserAvatar"
-                                class="rounded-circle"
+                                class="dashboard-avatar rounded-circle"
                                 src=""
                                 alt="Avatar"
                                 width="32"
@@ -50,7 +50,7 @@ export const dashboardTemplate = () => `
                         </a>
 
                         <ul
-                            class="dropdown-menu dropdown-menu-end shadow"
+                            class="dashboard-dropdown dropdown-menu dropdown-menu-end shadow"
                             aria-labelledby="userDropdown"
                         >
                             <li>
@@ -77,25 +77,23 @@ export const dashboardTemplate = () => `
                         </ul>
 
                     </li>
-
                 </ul>
-
             </nav>
 
             <!-- Contenido -->
-            <main id="content" class="flex-grow-1">
+            <main id="content" class="dashboard-content flex-grow-1">
 
-                <div class="container-fluid px-4 py-4">
+                <div class="dashboard-container container-fluid px-4 py-4">
 
                     <!-- Encabezado -->
-                    <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="dashboard-header d-flex align-items-center justify-content-between mb-4">
 
                         <div>
-                            <h1 class="h3 mb-0 fw-bold">
-                                Tus tareas
+                            <h1 class="dashboard-title mb-0 fw-bold">
+                                Tus <span>tareas</span>
                             </h1>
 
-                            <p class="text-muted small mb-0">
+                            <p class="dashboard-subtitle small mb-0">
                                 Gestión dinámica de actividades
                             </p>
                         </div>
@@ -103,7 +101,7 @@ export const dashboardTemplate = () => `
                         <button
                             id="btnNuevaTarea"
                             type="button"
-                            class="btn btn-primary btn-sm shadow-sm fw-bold"
+                            class="btn btn-main"
                         >
                             <i class="bi bi-plus-circle me-1"></i>
                             Nueva Tarea
@@ -112,20 +110,19 @@ export const dashboardTemplate = () => `
                     </div>
 
                     <!-- Filtros -->
-                    <div class="row mb-4">
-
+                    <div class="dashboard-filters row mb-4">
                         <div class="col-md-4">
 
                             <label
                                 for="selectFiltroEstado"
-                                class="form-label small text-muted"
+                                class="form-label small"
                             >
                                 Filtrar por estado
                             </label>
 
                             <select
                                 id="selectFiltroEstado"
-                                class="form-select form-select-sm shadow-sm"
+                                class="form-select form-select-sm"
                             >
                                 <option value="0">
                                     Todos los estados
@@ -133,22 +130,19 @@ export const dashboardTemplate = () => `
                             </select>
 
                         </div>
-
                     </div>
 
                     <!-- Tabla -->
-                    <div class="card shadow-sm border-0">
+                    <div class="dashboard-card card border-0">
 
                         <div class="card-body p-0">
-
                             <div class="table-responsive">
 
                                 <table
                                     id="tablaTareas"
-                                    class="table table-hover align-middle mb-0"
+                                    class="dashboard-table table table-hover align-middle mb-0"
                                 >
-
-                                    <thead class="table-light">
+                                    <thead>
                                         <tr>
                                             <th class="ps-4">#</th>
                                             <th>Título</th>
@@ -163,13 +157,11 @@ export const dashboardTemplate = () => `
                                     </thead>
 
                                     <tbody id="tablaTareasBody">
-                                        <!-- Las tareas se cargarán dinámicamente -->
+                                        <!-- Tareas dinámicas -->
                                     </tbody>
-
                                 </table>
 
                             </div>
-
                         </div>
 
                     </div>
@@ -185,4 +177,3 @@ export const dashboardTemplate = () => `
     <!-- Contenedor de componentes -->
     <div id="dashboardComponents"></div>
 `;
-
