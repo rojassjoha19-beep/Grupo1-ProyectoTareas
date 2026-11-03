@@ -30,7 +30,7 @@ const setupLoginForm = (form) => {
         toastr.error(response.message || "Credenciales inválidas");
       }
     } catch (error) {
-      toastr.error("Error al conectar con el servidor");
+      toastr.error(error.message || "Error al conectar con el servidor");
     }
   });
 };

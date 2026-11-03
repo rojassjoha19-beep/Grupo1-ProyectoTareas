@@ -14,7 +14,7 @@
     <!-- Toastr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <!-- Estilos Custom -->
-    <link href="<?php echo RUTA_URL; ?>/css/estilos.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo RUTA_URL; ?>/css/index.css">
 </head>
 <body class="bg-light">
 
