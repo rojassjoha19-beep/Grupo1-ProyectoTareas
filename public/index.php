@@ -26,6 +26,8 @@
       // =========================================================================
    // RUTAS API REST - USUARIOS
    // =========================================================================
+   //Carga la lista con nombre, email y rol actual de cada usuario. usuario.id,
+                   
    $router->get('/api/usuarios', ['UsuarioController', 'index']);
    $router->put('/api/usuarios/{id}/rol', ['UsuarioController', 'cambiarRol']);
 
