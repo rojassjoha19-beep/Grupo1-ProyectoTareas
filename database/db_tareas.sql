@@ -137,7 +137,7 @@ WHERE r.nombre = 'Administrador';
 INSERT INTO `rol_permiso` (`rol_id`, `permiso_id`)
 SELECT r.id, p.id FROM `rol` r CROSS JOIN `permiso` p
 WHERE r.nombre = 'Líder' AND p.nombre IN
-('usuarios.ver','equipos.ver','equipos.miembros','tareas.ver','tareas.crear',
+('usuarios.ver','equipos.ver','equipos.miembros','equipos.crear','tareas.ver','tareas.crear',
  'tareas.editar','tareas.eliminar','tareas.estado','estadisticas.ver');
 
 -- Miembro
