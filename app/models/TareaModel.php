@@ -27,7 +27,7 @@ class TareaModel
      * Si $id_estado tiene un valor, filtra por estado.
      */
 
-public function buscarTareas($id_estado = 0)
+public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
 {
     $sql = "SELECT
                 tarea.id AS id_tarea,
@@ -47,6 +47,11 @@ public function buscarTareas($id_estado = 0)
         $sql .= " AND estado.id_estado = :id_estado";
     }
 
+    // Filtro opcional por fecha de vencimiento (día completo).
+    if (!empty($fecha_vencimiento)) {
+        $sql .= " AND DATE(tarea.expired_at) = :fecha_vencimiento";
+    }
+
     $sql .= " ORDER BY tarea.created_at DESC";
 
     $this->db->query($sql);
@@ -60,6 +65,13 @@ public function buscarTareas($id_estado = 0)
         $this->db->bind(
             'id_estado',
             $id_estado
+        );
+    }
+
+    if (!empty($fecha_vencimiento)) {
+        $this->db->bind(
+            'fecha_vencimiento',
+            $fecha_vencimiento
         );
     }
 

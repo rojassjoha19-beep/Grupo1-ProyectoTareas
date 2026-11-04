@@ -6,12 +6,18 @@ export const tareaService = {
         return await httpClient("/api/estados");
     },
 
-    async getAll(statusId = 0) {
-        if (statusId > 0) {
-            return await httpClient(`/api/tareas/estado/${statusId}`);
+    async getAll(statusId = 0, fechaVencimiento = "") {
+        const endpoint = statusId > 0
+            ? `/api/tareas/estado/${statusId}`
+            : "/api/tareas";
+
+        const params = new URLSearchParams();
+        if (fechaVencimiento) {
+            params.set("fecha_vencimiento", fechaVencimiento);
         }
 
-        return await httpClient("/api/tareas");
+        const query = params.toString();
+        return await httpClient(query ? `${endpoint}?${query}` : endpoint);
     },
 
     async getById(id) {
