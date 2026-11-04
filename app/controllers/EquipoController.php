@@ -5,11 +5,13 @@ class EquipoController extends BaseController
 {
     
     private $equipoModel;
+    private $usuarioModel;
 
     public function __construct()
     {
        
         $this->equipoModel = $this->model('EquipoModel');
+        $this->usuarioModel = $this->model('UsuarioModel');
     }
 
     //sesion requerida para usar segun usuario logueado, si no hay manda 401.
@@ -41,12 +43,13 @@ class EquipoController extends BaseController
         
         $usuario_id = $this->requireSesion();
 
-        $equipos = $this->equipoModel->equiposDelUsuario($usuario_id);
+        if (!$this->usuarioModel->tienePermiso($usuario_id, 'equipos.ver')) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No posee permisos necesarios'
+            ], 403);
+        }
 
-        $this->jsonResponse([
-            'ok' => true,
-            'equipos' => $equipos
-        ]);
     }
 
 
@@ -59,15 +62,25 @@ class EquipoController extends BaseController
     {
         $usuario_id = $this->requireSesion();
 
+
+         if (!$this->usuarioModel->tienePermiso($usuario_id, 'equipos.ver')) {
+             $this->jsonResponse([
+            'ok' => false,
+            'mensaje' => 'No posee permisos necesarios'
+            ], 403);
+         }
+
         if (!$id) {
             $this->jsonResponse([
                 'ok' => false,
                 'mensaje' => 'ID de equipo no valido.'
             ], 400);
         }
+
          $id = (int)$id;
          
          $equipo = $this->equipoModel->obtenerEquipo($id);
+
         if (!$equipo) {
             $this->jsonResponse([
                 'ok' => false,
@@ -76,13 +89,13 @@ class EquipoController extends BaseController
         }
 
         if (!$this->equipoModel->esMiembro($id, $usuario_id)){
-
-        $this->jsonResponse([
+            $this->jsonResponse([
             'ok' => false,
             'mensaje' => 'No es miembro de este equipo.'
-        ],400);
-          }
-        //ver codigos exactos 
+            ],403);
+        }
+
+        
      $miembros = $this->equipoModel->obtenerMiembros($id);
 
         $this->jsonResponse([
@@ -102,12 +115,12 @@ class EquipoController extends BaseController
     public function store()
     {
        $usuario_id = $this->requireSesion();
-        if (!$this->equipoModel->esLider($usuario_id)) {
-               $this->jsonResponse([
+    //verifica si tiene permiso de crear equipo, sino manda 403
+            if (!$this->usuarioModel->tienePermiso($usuario_id, 'equipos.crear')) {
+            $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => 'Solo un líder puede crear equipos.'
+                'mensaje' => 'No posee permisos necesarios'
             ], 403);
-       
         }
 
         $data   = $this->getJsonBody();
@@ -129,9 +142,9 @@ class EquipoController extends BaseController
             ], 400);
         }
 
-         $equipoId = $this->equipoModel->crearEquipo($nombre, $usuario_id);
+         $equipo_id = $this->equipoModel->crearEquipo($nombre, $usuario_id);
 
-          if (!$equipoId) {
+          if (!$equipo_id) {
             $this->jsonResponse([
                 'ok' => false,
                 'mensaje' => 'No se pudo crear el equipo'

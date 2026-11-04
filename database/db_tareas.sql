@@ -128,10 +128,13 @@ INSERT INTO `permiso` (`nombre`, `descripcion`) VALUES
 -- Volcado de datos para la tabla `rol_permiso`
 --
 
--- Administrador: todos los permisos
+-- Administrador: todos los permisos excepto 'equipos.crear' (para que no cree equipos sin líder)
+
+
 INSERT INTO `rol_permiso` (`rol_id`, `permiso_id`)
 SELECT r.id, p.id FROM `rol` r CROSS JOIN `permiso` p
-WHERE r.nombre = 'Administrador';
+WHERE r.nombre = 'Administrador'
+AND p.nombre <> 'equipos.crear';
 
 -- Líder
 INSERT INTO `rol_permiso` (`rol_id`, `permiso_id`)
