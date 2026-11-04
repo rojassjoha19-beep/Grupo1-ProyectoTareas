@@ -184,4 +184,40 @@ class EquipoModel
 
         return $this->db->registers();
     }
+
+    /**
+     * Cambia el nombre de un equipo.
+     */
+    public function actualizarEquipo($equipo_id, $nombre)
+    {
+        $this->db->query(
+            "UPDATE equipo
+             SET nombre = :nombre
+             WHERE id = :id"
+        );
+
+        $this->db->bind('nombre', $nombre);
+        $this->db->bind('id', (int)$equipo_id);
+
+        return $this->db->execute();
+    }
+
+    //contar tareas activas de un equipo. avisa cuantas hay para pedir confirmacion
+         public function contarTareasDeEquipo($equipo_id)
+    {
+        $this->db->query(
+            "SELECT COUNT(*) AS total
+             FROM tarea
+             WHERE equipo_id = :equipo_id
+             AND deleted_at IS NULL"
+        );
+
+        $this->db->bind('equipo_id', (int)$equipo_id);
+
+        $resultado = $this->db->register();
+        return $resultado ? (int)$resultado->total : 0;
+    }
+
+    
+
 }
