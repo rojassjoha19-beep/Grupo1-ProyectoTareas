@@ -10,7 +10,7 @@ class UsuarioModel
     }
 
     /**
-     * Lista todos los usuario y el actual. 
+     * Lista todos los usuarios 
     */
 
      public function listarUsuarios()
