@@ -21,7 +21,28 @@ class TareaController extends BaseController
      */
     public function index($id_estado = 0)
     {
-        $tareas = $this->tareaModel->buscarTareas($id_estado);
+        $fecha_vencimiento = trim($_GET['fecha_vencimiento'] ?? '');
+
+        // Validar el formato YYYY-MM-DD recibido desde el selector de fecha.
+        if ($fecha_vencimiento !== '') {
+            $fecha = DateTimeImmutable::createFromFormat('!Y-m-d', $fecha_vencimiento);
+            $erroresFecha = DateTimeImmutable::getLastErrors();
+
+            if (
+                !$fecha ||
+                ($erroresFecha !== false && ($erroresFecha['warning_count'] > 0 || $erroresFecha['error_count'] > 0)) ||
+                $fecha->format('Y-m-d') !== $fecha_vencimiento
+            ) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'La fecha de vencimiento no es válida.'
+                ], 400);
+            }
+        } else {
+            $fecha_vencimiento = null;
+        }
+
+        $tareas = $this->tareaModel->buscarTareas($id_estado, $fecha_vencimiento);
 
         $this->jsonResponse([
             'ok' => true,

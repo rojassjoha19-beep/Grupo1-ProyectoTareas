@@ -1,4 +1,27 @@
 
+// Convierte fechas de MySQL (YYYY-MM-DD o YYYY-MM-DD HH:mm:ss)
+// a formato argentino para mostrarlas en la interfaz.
+const formatearFecha = (valor, incluirHora = false) => {
+    if (!valor) return "";
+
+    const coincidencia = String(valor).trim().match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::\d{2})?)?$/
+    );
+
+    // Si llega un formato inesperado, conservamos el valor original.
+    if (!coincidencia) return String(valor);
+
+    const [, anio, mes, dia, hora, minutos] = coincidencia;
+    const fecha = `${dia}/${mes}/${anio}`;
+
+    if (incluirHora && hora && minutos) {
+        return `${fecha} ${hora}:${minutos}`;
+    }
+
+    return fecha;
+};
+
+
 export const tableTareaTemplate = (tareas) => {
     if (!tareas || tareas.length === 0) {
         return `
@@ -32,13 +55,13 @@ export const tableTareaTemplate = (tareas) => {
 
                     <td>
                         <small class="text-muted">
-                            ${tarea.created_at || "-"}
+                            ${formatearFecha(tarea.created_at, true) || "-"}
                         </small>
                     </td>
 
                     <td>
                         <small class="text-muted">
-                            ${tarea.expired_at || "Sin fecha"}
+                            ${formatearFecha(tarea.expired_at) || "Sin fecha"}
                         </small>
                     </td>
 
@@ -77,4 +100,3 @@ export const tableTareaTemplate = (tareas) => {
         )
         .join("");
 };
-
