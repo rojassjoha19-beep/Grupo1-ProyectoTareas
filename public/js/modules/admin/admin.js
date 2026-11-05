@@ -1,4 +1,4 @@
-import { adminDashboardTemplate } from "../templates/admin/adminDashboardTemple.js";
+import { adminDashboardTemplate } from "../../templates/admin/adminDashboardTemple.js";
 
 
 export const renderAdminDashboard = (container) => {

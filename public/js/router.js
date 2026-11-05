@@ -8,7 +8,8 @@ import {
 } from "./modules/auth/index.js";
 
 import { renderDashboard } from "./modules/dashboard.js";
-import { renderAdminDashboard } from "./modules/admin.js";
+import { renderAdminDashboard } from "./modules/admin/admin.js";
+import { renderUsuarioDashboard } from "./modules/usuario/usuario.js";
 
 const routes = {
   "/": renderHome,
@@ -18,6 +19,7 @@ const routes = {
   "/update-password": renderUpdatePassword,
   "/dashboard": renderDashboard,
   "/admin": renderAdminDashboard,
+  "/usuario": renderUsuarioDashboard
 };
 
 const getNormalizedPath = () => {
