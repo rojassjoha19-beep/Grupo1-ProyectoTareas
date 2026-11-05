@@ -217,7 +217,40 @@ class EquipoModel
         $resultado = $this->db->register();
         return $resultado ? (int)$resultado->total : 0;
     }
+     /**
+     * Elimina el equipo y sus filas de equipo_usuario en una transacción.
+     */
+    public function eliminarEquipo($equipo_id)
+    {
+        try {
+            $this->db->query("START TRANSACTION");
+            $this->db->execute();
 
-    
+            $this->db->query(
+                "DELETE FROM equipo_usuario
+                 WHERE equipo_id = :equipo_id"
+            );
+            $this->db->bind('equipo_id', (int)$equipo_id);
+            $this->db->execute();
+
+            $this->db->query(
+                "DELETE FROM equipo
+                 WHERE id = :id"
+            );
+            $this->db->bind('id', (int)$equipo_id);
+            $this->db->execute();
+
+            $this->db->query("COMMIT");
+            $this->db->execute();
+
+            return true;
+        } catch (Exception $e) {
+            $this->db->query("ROLLBACK");
+            $this->db->execute();
+
+            return false;
+        }
+    }
+
 
 }
