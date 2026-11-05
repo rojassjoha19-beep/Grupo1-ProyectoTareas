@@ -1,4 +1,4 @@
-import { renderHome } from "./modules/home.js";
+import { renderHome } from "./modules/home/home.js";
 
 import {
   renderLogin,
