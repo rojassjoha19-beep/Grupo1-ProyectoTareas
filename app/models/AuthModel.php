@@ -44,7 +44,21 @@ class AuthModel {
 		return $result;
 	}
 
+	public function permiso_por_rol ($rol_id)
+	{
+		$this->db->query(
+			"SELECT permiso.nombre 
+		FROM rol_permiso 
+		INNER JOIN permiso 
+		ON permiso.id = rol_permiso.permiso_id
+		WHERE rol_permiso.rol_id = :rol_id"
+		);
 
+		$this->db->bind('rol_id',(int) $rol_id);
+		
+		//nombre de permisos segun id de rol
+		return array_column($this->db->registers(), 'nombre');
+	}
 
 
 
