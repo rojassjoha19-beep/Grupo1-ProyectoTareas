@@ -1,4 +1,4 @@
-import { renderHome } from "./modules/home/home.js";
+import { renderHome } from "./modules/home/homeDashboard.js";
 
 import {
   renderLogin,
@@ -8,8 +8,8 @@ import {
 } from "./modules/auth/index.js";
 
 import { renderDashboard } from "./modules/dashboard.js";
-import { renderAdminDashboard } from "./modules/admin/admin.js";
-import { renderUsuarioDashboard } from "./modules/usuario/usuario.js";
+import { renderAdminDashboard } from "./modules/admin/adminDashboard.js";
+import { renderUsuarioDashboard } from "./modules/usuario/usuarioDashboard.js";
 
 const routes = {
   "/": renderHome,
@@ -18,8 +18,8 @@ const routes = {
   "/reset-password": renderResetPassword,
   "/update-password": renderUpdatePassword,
   "/dashboard": renderDashboard,
-  "/admin": renderAdminDashboard,
-  "/usuario": renderUsuarioDashboard
+  "/dashboard/admin": renderAdminDashboard,
+  "/dashboard/usuario": renderUsuarioDashboard
 };
 
 const getNormalizedPath = () => {

@@ -1,4 +1,4 @@
-export const dashboardTemplate = ( contenidoMain = '') => `
+export const dashboardLayoutTemplate = ( contenidoMain = '') => `
     <div id="dashboard" class="dashboard-page d-flex min-vh-100">
 
         <!-- Menú -->

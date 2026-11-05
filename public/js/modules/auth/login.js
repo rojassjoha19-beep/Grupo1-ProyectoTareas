@@ -23,9 +23,21 @@ const setupLoginForm = (form) => {
 
     try {
       const response = await authService.login(credentials);
+      console.log("Respuesta del login:", response);
+
       if (response.success) {
+
         toastr.success("Sesión iniciada correctamente");
+
+        const session = await authService.checkSession();
+
+        console.log("Sesión del usuario:", session);
+
         router.navigateTo("/dashboard");
+
+        /* toastr.success("Sesión iniciada correctamente");
+        router.navigateTo("/dashboard"); */
+        
       } else {
         toastr.error(response.message || "Credenciales inválidas");
       }
