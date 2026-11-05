@@ -60,6 +60,9 @@
 
    // Eliminar una tarea por ID
    $router->delete('/api/tareas/{id}', ['TareaController', 'destroy']);
+   
+   // Porcentaje de tareas del equipo por estado (ToDo, Doing, Finished, Expired)
+   $router->get('/api/equipos/{id}/estadisticas', ['EstadisticaController', 'porEquipo']);
 
      // =========================================================================
    // RUTAS API REST - MIEMBROS DE EQUIPO 
