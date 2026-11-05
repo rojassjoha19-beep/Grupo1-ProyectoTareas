@@ -167,73 +167,132 @@ class EquipoController extends BaseController
         
     }
 
-/**
- * PATCH /api/tareas/{id_tarea}
- *
- * Actualiza una tarea existente.
- */
-public function update($id_tarea = null)
-{
-    
-  /*   if (!$id_tarea) {
-        $this->jsonResponse([
-            'ok' => false,
-            'mensaje' => 'ID de tarea no válido.'
-        ], 400);
-    }
-
-    $datos = $this->getJsonBody();
-
-    $data = [
-        'titulo' => trim($datos['titulo'] ?? ''),
-        'descripcion' => trim($datos['descripcion'] ?? ''),
-        'expired_at' => $datos['expired_at'] ?? null,
-        'id_estado' => $datos['id_estado'] ?? 1,
-        'id_tarea' => $id_tarea
-    ];
-
-    if (empty($data['titulo'])) {
-        $this->jsonResponse([
-            'ok' => false,
-            'mensaje' => 'El título es obligatorio.'
-        ], 400);
-    }
-
-    $actualizado =
-        $this->tareaModel->updateTarea($data);
-
-    $this->jsonResponse([
-        'ok' => (bool) $actualizado,
-        'mensaje' => $actualizado
-            ? 'Tarea actualizada correctamente.'
-            : 'Sin cambios realizados.'
-    ]); */
-}
-
-
-
-    /**
-     * DELETE /api/tareas/{id_tarea}
+    /* *
+     * PUT /api/equipos/{id}
+     * Body: { "nombre": "Nuevo nombre" }
      *
-     * Elimina una tarea mediante soft-delete.
-     */
-    public function destroy($id_tarea = null)
-    {/* 
-        if (!$id_tarea) {
+     * Cambia el nombre de un equipo. Requiere el permiso equipos.editar. VER PERMISOS DE LIDER + CAMBIAR LIDER 
+      *$router->put('/api/equipos/{id}', ['EquipoController', 'update']);
+    /* public function update($id = null)
+    {
+        $usuario_id = $this->requireSesion();
+
+        if (!$this->usuarioModel->tienePermiso($usuario_id, 'equipos.editar')) {
             $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => 'ID de tarea no provisto.'
+                'mensaje' => 'No posee permisos necesarios'
+            ], 403);
+        }
+
+        if (!$id || !ctype_digit((string)$id)) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'ID de equipo no válido.'
             ], 400);
         }
 
-        $eliminado = $this->tareaModel->eliminarTarea($id_tarea);
+        $id = (int)$id;
+
+        $equipo = $this->equipoModel->obtenerEquipo($id);
+
+        if (!$equipo) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'El equipo no existe.'
+            ], 404);
+        }
+
+        $data   = $this->getJsonBody();
+        $nombre = trim((string)($data['nombre'] ?? ''));
+
+        if ($nombre === '') {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'El nombre del equipo es obligatorio'
+            ], 400);
+        }
+
+        if (mb_strlen($nombre) > 50) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'El nombre no puede superar los 50 caracteres'
+            ], 400);
+        }
+
+        if (!$this->equipoModel->actualizarEquipo($id, $nombre)) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No se pudo actualizar el equipo.'
+            ], 500);
+        }
 
         $this->jsonResponse([
-            'ok' => (bool) $eliminado,
-            'mensaje' => $eliminado
-                ? 'Tarea eliminada exitosamente.'
-                : 'Error al intentar eliminar la tarea.'
-        ]); */
-    }
+            'ok' => true,
+            'mensaje' => 'Equipo actualizado correctamente.'
+        ]);
+    } */
+ 
+
+        /**
+         * Eliminar equipo
+         * DELETE /api/equipos/{id}
+         * Si tiene tareas, requiere confirmar, 
+         *DELETE /api/equipos/{id}?confirmar=1
+         * 
+         */
+        public function destroy($id = null)
+        {
+            usuario_id=$this->requireSesion();
+            
+            if( !$this->usuarioModel->tienePermiso($usuario_id, 'equipos.eliminar')) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'No posee permisos necesarios'
+                ], 403);
+            }
+
+            if(!id || !ctype_digit((string)$id)) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'ID de equipo no válido.'
+                ], 400);
+            }
+            $id = (int)$id;
+
+            $equipo = $this->equipoModel->obtenerEquipo($id);
+
+            if (!$equipo) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'El equipo no existe.'
+                ], 404);
+
+            }
+            // Confirmacion con tareas 
+
+            $total_tareas = $this->equipoModel->contarTareas($id);
+            $confirmar = ($_GET['confirmar'] ?? '') === '1';
+
+            if($total_tareas > 0 && !$confirmar) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'El equipo tiene tareas asignadas. Por favor, confirme la eliminación.'
+                    'tareas' => $total_tareas
+                ], 409);
+            }       
+
+                if($this->equipoModel->eliminarEquipo($id, $total_tareas > 0)) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'No se pudo eliminar el equipo.'
+                ], 500);
+            }
+
+            $this->jsonResponse([
+                'ok' => true,
+                'mensaje' => 'Equipo eliminado exitosamente.'
+
+            ])
+        }
 }
 

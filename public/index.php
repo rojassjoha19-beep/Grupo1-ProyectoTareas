@@ -17,11 +17,22 @@
       // =========================================================================
    // RUTAS API REST - EQUIPOS
    // =========================================================================
+   // Obtiene la lista de equipos donde pertenece el usuario
    $router->get('/api/equipos', ['EquipoController', 'index']);
+   
+   // Obtiene los detalles de un equipo específico por ID
    $router->get('/api/equipos/{id}', ['EquipoController', 'show']);
+
+   // Crea un nuevo equipo. Solo puede hacerlo un usuario con rol Líder.
    $router->post('/api/equipos', ['EquipoController', 'store']);
 
+   //Elimina un equipo Si tiene tareas, requiere confirmar.
+   $router->delete('/api/equipos/{id}', ['EquipoController', 'destroy']);
 
+   //Si tiene tareas, requiere confirmar.
+   $router->delete('/api/equipos/{id}?confirmar=1', ['EquipoController', 'destroy']);
+
+  
    
       // =========================================================================
    // RUTAS API REST - USUARIOS
