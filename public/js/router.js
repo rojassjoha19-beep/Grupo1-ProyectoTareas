@@ -8,6 +8,7 @@ import {
 } from "./modules/auth/index.js";
 
 import { renderDashboard } from "./modules/dashboard.js";
+import { renderAdminDashboard } from "./modules/admin.js";
 
 const routes = {
   "/": renderHome,
@@ -16,6 +17,7 @@ const routes = {
   "/reset-password": renderResetPassword,
   "/update-password": renderUpdatePassword,
   "/dashboard": renderDashboard,
+  "/admin": renderAdminDashboard,
 };
 
 const getNormalizedPath = () => {
