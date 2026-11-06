@@ -1,3 +1,4 @@
+
 export const dashboardMenu = (permisos = []) => `
     <div class="menu">
 
@@ -15,6 +16,7 @@ export const dashboardMenu = (permisos = []) => `
         </div>
 
         <nav class="menu-nav">
+
             <a href="/dashboard" data-link>
                 <i class="bi bi-speedometer2"></i>
                 Dashboard
@@ -28,9 +30,9 @@ export const dashboardMenu = (permisos = []) => `
             ` : ""}
 
             ${permisos.includes("usuarios.ver") ? `
-                <a href="/usuarios" data-link>
+                <a href="/admin/usuarios" data-link>
                     <i class="bi bi-people"></i>
-                    Usuarios
+                    Gestión de usuarios
                 </a>
             ` : ""}
 

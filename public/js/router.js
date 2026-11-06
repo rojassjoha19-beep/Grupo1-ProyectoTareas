@@ -11,6 +11,7 @@ import { renderDashboard } from "./modules/dashboard.js";
 import { renderAdminDashboard } from "./modules/admin/adminDashboard.js";
 import { renderUsuarioDashboard } from "./modules/usuario/usuarioDashboard.js";
 import { renderUsuariosAdminDashBoard } from "./modules/admin/usuariosAdminDashboard.js";
+import { renderLiderDashboard } from "./modules/lider/liderDashboard.js";
 
 const routes = {
   "/": renderHome,
@@ -21,6 +22,7 @@ const routes = {
   "/dashboard": renderDashboard,
   "/dashboard/admin": renderAdminDashboard,
   "/dashboard/admin/usuarios": renderUsuariosAdminDashBoard, 
+  "/dashboard/lider": renderLiderDashboard,
   "/dashboard/usuario": renderUsuarioDashboard
 };
 

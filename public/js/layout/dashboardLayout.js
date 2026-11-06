@@ -6,17 +6,24 @@ import { RUTA_AVATAR } from "../config.js";
 export const renderDashboardLayout = async (container, contenido) => {
     // Comprobar sesión
     const response = await authService.checkSession();
+    
 
     if (!response.success || !response.user) {
         window.location.href = "/Grupo1-ProyectoTareas/login";
         return false;
     }
 
+    // Verificar usuario y permisos del backend
+    console.log("login Usuario:", response.user);
+    console.log("login Permisos:", response.user.permisos);
+
+
     // Obtener permisos
     const permisos = Array.isArray(response.user.permisos)
         ? response.user.permisos
         : [];
 
+   
     // Renderizar Dashboard con el contenido recibido
     container.innerHTML = dashboardLayoutTemplate(contenido);
 

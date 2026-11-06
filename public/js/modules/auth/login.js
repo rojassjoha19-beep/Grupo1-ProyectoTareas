@@ -24,8 +24,13 @@ const setupLoginForm = (form) => {
     try {
       const response = await authService.login(credentials);
       console.log("Respuesta del login:", response);
+      console.log("Respuesta del login:", response);
+      console.log("Usuario:", response.user); 
+      console.log("Permisos:", response.user?.permisos);
+      console.log("Rol:", response.user?.rol);
 
       if (response.success) {
+        
 
         toastr.success("Sesión iniciada correctamente");
 
