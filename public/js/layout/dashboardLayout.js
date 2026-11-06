@@ -12,7 +12,7 @@ export const renderDashboardLayout = async (container, contenido) => {
         window.location.href = "/Grupo1-ProyectoTareas/login";
         return false;
     }
-
+    console.log("respuesta ", response)
     // Verificar usuario y permisos del backend
     console.log("login Usuario:", response.user);
     console.log("login Permisos:", response.user.permisos);
@@ -31,6 +31,7 @@ export const renderDashboardLayout = async (container, contenido) => {
     const menuContainer = container.querySelector("#dashboardMenu");
 
     if (menuContainer) {
+        
         menuContainer.innerHTML = dashboardMenu(permisos);
     }
 
