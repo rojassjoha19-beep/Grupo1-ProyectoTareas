@@ -1,5 +1,11 @@
-import { usuarioDashboardTemple } from "../../templates/usuario/usuarioDashboardTemple.js"
+import { renderDashboardLayout } from "../../layout/dashboardLayout.js";
+import { usuarioDashboardTemplate } from "../../templates/usuario/usuarioDashboardTemplate.js";
 
-export const renderUsuarioDashboard = ( container) => {
-    return container.innerHTML = usuarioDashboardTemple();
-}
+export const renderUsuarioDashboard = async (container) => {
+    const cargado = await renderDashboardLayout(
+        container,
+        usuarioDashboardTemplate()
+    );
+
+    if (!cargado) return;
+};

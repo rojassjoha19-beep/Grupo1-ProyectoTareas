@@ -1,6 +1,11 @@
-import { adminDashboardTemplate } from "../../templates/admin/adminDashboardTemple.js";
+import { renderDashboardLayout } from "../../layout/dashboardLayout.js";
+import { adminDashboardTemplate } from "../../templates/admin/adminDashboardTemplate.js";
 
+export const renderAdminDashboard = async (container) => {
+    const cargado = await renderDashboardLayout(
+        container,
+        adminDashboardTemplate()
+    );
 
-export const renderAdminDashboard = (container) => {
-    container.innerHTML = adminDashboardTemplate();
+    if (!cargado) return;
 };
