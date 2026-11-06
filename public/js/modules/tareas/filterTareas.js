@@ -3,8 +3,9 @@ import { tareaService } from "../../services/tareaService.js";
 import { getTareas } from "./getTareas.js";
 
 export const initFilterTarea = async () => {
-    const selectFiltro =
-        document.getElementById("selectFiltroEstado");
+    const selectFiltro = document.getElementById("selectFiltroEstado");
+    const fechaFiltro = document.getElementById("filtroFechaVencimiento");
+    const btnLimpiar = document.getElementById("btnLimpiarFiltros");
 
     if (!selectFiltro) return;
 
@@ -39,8 +40,20 @@ export const initFilterTarea = async () => {
                 .join("")}
         `;
 
-        selectFiltro.addEventListener("change", async (e) => {
-            await getTareas(Number(e.target.value));
+        const aplicarFiltros = () => {
+            return getTareas(
+                Number(selectFiltro.value),
+                fechaFiltro?.value || ""
+            );
+        };
+
+        selectFiltro.addEventListener("change", aplicarFiltros);
+        fechaFiltro?.addEventListener("change", aplicarFiltros);
+
+        btnLimpiar?.addEventListener("click", () => {
+            selectFiltro.value = "0";
+            if (fechaFiltro) fechaFiltro.value = "";
+            aplicarFiltros();
         });
     } catch (error) {
         console.error(

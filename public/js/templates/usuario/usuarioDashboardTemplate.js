@@ -47,6 +47,30 @@ export const usuarioDashboardTemplate = () => `
                             </select>
 
                         </div>
+
+                        <div class="col-md-4">
+                            <label
+                                for="filtroFechaVencimiento"
+                                class="form-label small"
+                            >
+                                Filtrar por vencimiento
+                            </label>
+                            <input
+                                type="date"
+                                id="filtroFechaVencimiento"
+                                class="form-control form-control-sm"
+                            >
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button
+                                type="button"
+                                id="btnLimpiarFiltros"
+                                class="btn btn-outline-secondary btn-sm w-100"
+                            >
+                                Limpiar filtros
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Tabla -->

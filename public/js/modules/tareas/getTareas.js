@@ -2,15 +2,15 @@
 import { tareaService } from "../../services/tareaService.js";
 import { tableTareaTemplate } from "../../templates/tareas/tableTareaTemplate.js";
 
-export const getTareas = async (idEstado = 0) => {
+export const getTareas = async (idEstado = 0, fechaVencimiento = "") => {
     const tablaBody = document.getElementById("tablaTareasBody");
 
     if (!tablaBody) return;
 
     try {
-      const response = await tareaService.getAll(idEstado);
+      const response = await tareaService.getAll(idEstado, fechaVencimiento);
       
-      console.log("ID ESTADO:", idEstado);
+      console.log("FILTROS - ESTADO:", idEstado, "VENCIMIENTO:", fechaVencimiento);
       console.log("RESPUESTA TAREAS:", response);
 
 

@@ -7,21 +7,30 @@ class AuthController extends BaseController {
     public function __construct() {
         $this->authModel = $this->model('AuthModel');
     }
-
+    //
     public function checkSession() {
-        if (isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['user_id'])) {
+
+         $this->jsonResponse(['success' => false, 'message' => 'Sin sesión activa'], 401);
+        }
+            //buscar usuario en base, llama a a la funcion buscarUsuario del modelo UsuarioModel
+            $usuario = $this->model('UsuarioModel')->buscarUsuario((int)$_SESSION['user_id']);
+            // Guarda el rol del usuario en la sesión
+
+            $_SESSION['user_rol_id'] = (int)$usuario->rol_id;
+            // Devuelve la información del usuario en json
             $this->jsonResponse([
                 'success' => true,
                 'user' => [
                     'id'     => $_SESSION['user_id'],
-                    'nombre' => $_SESSION['user_name'] ?? '',
-                    'email'  => $_SESSION['user_email'] ?? '',
-                    'avatar' => $_SESSION['user_avatar'] ?? null
+                    'nombre' => $_SESSION['user_name'],
+                    'email'  => $_SESSION['user_email'] ,
+                    'avatar' => $_SESSION['user_avatar'] ,
+                    'rol_id' => $_SESSION['user_rol_id']
                 ]
             ]);
-        } else {
-            $this->jsonResponse(['success' => false, 'message' => 'Sin sesión activa'], 401);
-        }
+        
+        
     }
 
     public function login() {
@@ -38,6 +47,7 @@ class AuthController extends BaseController {
 
         // Si el usuario existe y recuperó la contraseña
         if ($user && isset($user->pass)) {
+
             // Limpiamos bytes nulos o espacios invisibles que deja AES_DECRYPT de MySQL
             $dbPass = trim((string)$user->pass);
             $inputPass = trim((string)$data['password']);
@@ -47,11 +57,22 @@ class AuthController extends BaseController {
                 $_SESSION['user_name']   = $user->nombre;
                 $_SESSION['user_email']  = $user->email;
                 $_SESSION['user_avatar'] = $user->avatar ?? null;
+                // Guardamos el rol del usuario en la sesión
+                $_SESSION['user_rol_id'] = (int)$user->rol_id;
 
                 $this->jsonResponse([
                     'success' => true, 
                     'message' => 'Sesión iniciada correctamente',
-                    'user'    => $_SESSION
+
+
+                    // Devolvemos los datos del usuario para que el front-end pueda almacenarlos en su estado
+                    'user'    => [
+                        'id'     => (int)$user->id,
+                        'nombre' => $user->nombre,
+                        'email'  => $user->email,
+                        'avatar' => $user->avatar ?? null,
+                        'rol_id' => (int)$user->rol_id
+                    ]
                 ]);
             }
         }
@@ -61,6 +82,10 @@ class AuthController extends BaseController {
             'message' => 'Email o contraseña incorrectos'
         ], 401);
     }
+
+
+
+
     public function register() {
         $data = !empty($_POST) ? $_POST : $this->getJsonBody();
 
