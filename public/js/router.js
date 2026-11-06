@@ -10,6 +10,7 @@ import {
 import { renderDashboard } from "./modules/dashboard.js";
 import { renderAdminDashboard } from "./modules/admin/adminDashboard.js";
 import { renderUsuarioDashboard } from "./modules/usuario/usuarioDashboard.js";
+import { renderUsuariosAdminDashBoard } from "./modules/admin/usuariosAdminDashboard.js";
 
 const routes = {
   "/": renderHome,
@@ -19,7 +20,7 @@ const routes = {
   "/update-password": renderUpdatePassword,
   "/dashboard": renderDashboard,
   "/dashboard/admin": renderAdminDashboard,
-  "/dashboard/admin/usuarios": renderUsuariosAdminDashboard,
+  "/dashboard/admin/usuarios": renderUsuariosAdminDashBoard, 
   "/dashboard/usuario": renderUsuarioDashboard
 };
 
