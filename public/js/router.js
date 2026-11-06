@@ -19,6 +19,7 @@ const routes = {
   "/update-password": renderUpdatePassword,
   "/dashboard": renderDashboard,
   "/dashboard/admin": renderAdminDashboard,
+  "/dashboard/admin/usuarios": renderUsuariosAdminDashboard,
   "/dashboard/usuario": renderUsuarioDashboard
 };
 
