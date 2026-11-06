@@ -1,4 +1,4 @@
-export const usuarioDashboardTemple = () => `
+export const usuarioDashboardTemplate = () => `
             <!-- Contenido usuario -->
                 <div class="dashboard-container container-fluid px-4 py-4">
 
