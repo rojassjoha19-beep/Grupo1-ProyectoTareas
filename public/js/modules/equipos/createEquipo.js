@@ -1,23 +1,8 @@
+import { equiposService } from "../../services/equiposService.js";
 import { renderDashboard } from "../dashboard.js";
 import { authService } from "../../services/authService.js";
 import { createEquipoTemplate } from "../../templates/equipos/createEquipoTemplate.js";
 
-// Datos de prueba para ver la pantalla sin backend.
-// Cuando esté lista la parte de PHP, esto se borra y los datos se piden con un service.
-// Los ids empiezan en 101 para que no se confundan con el id de quien inició sesión
-const usuariosFalsos = [
-    { id: 101, nombre: "Lucía", apellido: "Gómez" },
-    { id: 102, nombre: "Martín", apellido: "Pérez" },
-    { id: 103, nombre: "Sofía", apellido: "Ruiz" },
-    { id: 104, nombre: "Diego", apellido: "Fernández" },
-    { id: 105, nombre: "Camila", apellido: "Torres" },
-    { id: 106, nombre: "Nicolás", apellido: "Vega" }
-];
-
-// Los que pueden ser líder además de quien inició sesión (jefes o administradores)
-const lideresFalsos = [
-    { id: 102, nombre: "Martín", apellido: "Pérez" }
-];
 
 // Saca mayúsculas y acentos para que al buscar "sofia" aparezca "Sofía"
 const normalizar = (texto) =>
@@ -39,15 +24,31 @@ export async function renderCreateEquipo(container) {
     // Mirá la consola para ver qué campos trae el usuario (id, nombre, etc.). Borrar después
     console.log("Usuario de la sesión:", usuario);
 
-    content.innerHTML = createEquipoTemplate({
-        usuario,
-        usuarios: usuariosFalsos,
-        lideres: [usuario, ...lideresFalsos]
-    });
+     const usuarios = await obtenerUsuarios(usuario);
 
+    // Quien crea el equipo queda como líder, por eso el select solo lo muestra a esa persona
+   
+   content.innerHTML = createEquipoTemplate({ usuario, usuarios });
     iniciarBuscador(content);
     iniciarChips(content);
     iniciarEnvio(content);
+}
+// Trae la lista de usuarios del backend y saca a quien inició sesión (ya es el líder).
+// Si falla, por ejemplo por falta de permisos, la lista queda vacía
+async function obtenerUsuarios(usuario) {
+    try {
+        const respuesta = await equiposService.listarUsuarios();
+
+        // Mirá la consola para ver qué campos trae cada usuario. Borrar después
+        console.log("Usuarios del backend:", respuesta.usuarios);
+
+        if (!respuesta.ok) return [];
+
+        return respuesta.usuarios.filter((u) => String(u.id) !== String(usuario.id));
+    } catch (error) {
+        console.error("No se pudo traer la lista de usuarios:", error);
+        return [];
+    }
 }
 
 // Mientras se escribe, oculta a las personas que no coinciden con la búsqueda
@@ -89,29 +90,77 @@ function iniciarChips(container) {
     checks.forEach((check) => check.addEventListener("change", actualizar));
 }
 
-// Al crear el equipo, junta los datos usando ids y no nombres.
-// Por ahora solo los muestra en la consola; después acá va el fetch a PHP
+// Al crear el equipo hace dos cosas, en este orden:
+// 1) crea el equipo y recibe su id
+// 2) agrega a cada integrante usando su id
 function iniciarEnvio(container) {
     const form = container.querySelector("#formCreateEquipo");
+    const boton = form.querySelector('button[type="submit"]');
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const datos = new FormData(form);
+        const nombre = datos.get("nombre").trim();
+        const descripcion = datos.get("descripcion").trim();
+        const integrantes = datos.getAll("integrantes");
 
-        const equipo = {
-            nombre: datos.get("nombre").trim(),
-            descripcion: datos.get("descripcion").trim(),
-            id_lider: datos.get("id_lider"),
-            integrantes: datos.getAll("integrantes")
-        };
-
-        if (!equipo.nombre) {
+        if (!nombre) {
             alert("Ingresá un nombre para el equipo.");
             return;
         }
 
-        console.log("Equipo a crear (por id):", equipo);
-        alert("Equipo de prueba listo. Mirá la consola (F12) para ver los datos.");
+        if (nombre.length > 50) {
+            alert("El nombre no puede superar los 50 caracteres.");
+            return;
+        }
+
+        // Se bloquea el botón para que no se mande dos veces
+        boton.disabled = true;
+
+        try {
+            const respuesta = await equiposService.crearEquipo({ nombre, descripcion });
+
+            if (!respuesta.ok) {
+                alert(respuesta.mensaje || "No se pudo crear el equipo.");
+                return;
+            }
+
+            // Se agregan los integrantes de a uno. Si alguno falla, se anota su nombre
+            const noAgregados = [];
+
+            for (const idUsuario of integrantes) {
+                try {
+                    const resultado = await equiposService.agregarMiembro(respuesta.id, idUsuario);
+                    if (!resultado.ok) noAgregados.push(idUsuario);
+                } catch (error) {
+                    noAgregados.push(idUsuario);
+                }
+            }
+
+            if (noAgregados.length === 0) {
+                alert("Equipo creado correctamente.");
+            } else {
+                const nombres = noAgregados.map((id) =>
+                    container.querySelector(`#integrante-${id}`)?.dataset.nombre ?? id
+                );
+                alert(`El equipo se creó, pero no se pudo agregar a: ${nombres.join(", ")}.`);
+            }
+
+            limpiarFormulario(container, form);
+        } catch (error) {
+            console.error("Error al crear el equipo:", error);
+            alert(error.message || "No se pudo crear el equipo.");
+        } finally {
+            boton.disabled = false;
+        }
     });
+}
+
+// Deja el formulario vacío para poder crear otro equipo
+function limpiarFormulario(container, form) {
+    form.reset();
+    container.querySelector("#chipsSeleccionados").innerHTML = "";
+    container.querySelector("#contadorSeleccionados").textContent = "0";
+    container.querySelector("#buscarUsuario").dispatchEvent(new Event("input"));
 }

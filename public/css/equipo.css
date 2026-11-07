@@ -1,0 +1,29 @@
+.equipo-page a:not(.btn) {
+    color: var(--color-secundario);
+}
+
+.equipo-page a:not(.btn):hover {
+    color: var(--color-terciario);
+}
+
+.equipo-page .btn-main {
+    color: white;
+}
+
+.equipo-page .badge {
+    background-color: var(--color-primario);
+    color: var(--color-terciario);
+    font-weight: 600;
+}
+
+.equipo-page .form-control:focus,
+.equipo-page .form-select:focus,
+.equipo-page .form-check-input:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 0.25rem rgba(143, 211, 168, 0.35);
+}
+
+.equipo-page .form-check-input:checked {
+    background-color: var(--color-secundario);
+    border-color: var(--color-secundario);
+}
