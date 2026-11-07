@@ -62,7 +62,7 @@ class AuthController extends BaseController {
                 $_SESSION['user_rol_id'] = (int)$user->rol_id;
 
                 //buscar permisos del usuario por rol
-                $permisos = $this->authModel->permisosPorRol((int)$user->rol_id);
+                $permisos = $this->authModel->permiso_por_rol((int)$user->rol_id);
 
                 $this->jsonResponse([
                     'success' => true, 
