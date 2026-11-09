@@ -1,46 +1,72 @@
 import { equiposService } from "../../services/equiposService.js";
-import { renderDashboard } from "../dashboard.js";
-import { authService } from "../../services/authService.js";
 import { createEquipoTemplate } from "../../templates/equipos/createEquipoTemplate.js";
 
-
-// Saca mayúsculas y acentos para que al buscar "sofia" aparezca "Sofía"
 const normalizar = (texto) =>
     texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-// Primero arma el dashboard (menú, barra de arriba y sesión) y después
-// cambia el contenido de tareas por el formulario de crear equipo
-export async function renderCreateEquipo(container) {
-    await renderDashboard(container);
+let abriendo = false;
 
-    const content = container.querySelector("#content");
-    if (!content) return;
+export function initCreateEquipo(usuario) {
+    const permisos = Array.isArray(usuario.permisos) ? usuario.permisos : [];
 
-    // La persona que inició sesión viene de la sesión real
-    const respuesta = await authService.checkSession();
-    const usuario = respuesta.user;
-    if (!usuario) return;
+    if (!permisos.includes("equipos.crear")) return;
 
-    // Mirá la consola para ver qué campos trae el usuario (id, nombre, etc.). Borrar después
-    console.log("Usuario de la sesión:", usuario);
+    const btnNuevaTarea = document.querySelector("#btnNuevaTarea");
+    if (!btnNuevaTarea) return;
 
-     const usuarios = await obtenerUsuarios(usuario);
+    const btnNuevoEquipo = document.createElement("button");
+    btnNuevoEquipo.id = "btnNuevoEquipo";
+    btnNuevoEquipo.type = "button";
+    btnNuevoEquipo.className = "btn btn-outline-secondary";
+    btnNuevoEquipo.innerHTML = '<i class="bi bi-people me-1"></i>Nuevo equipo';
 
-    // Quien crea el equipo queda como líder, por eso el select solo lo muestra a esa persona
-   
-   content.innerHTML = createEquipoTemplate({ usuario, usuarios });
-    iniciarBuscador(content);
-    iniciarChips(content);
-    iniciarEnvio(content);
+    const grupo = document.createElement("div");
+    grupo.className = "d-flex gap-2";
+    btnNuevaTarea.replaceWith(grupo);
+    grupo.append(btnNuevoEquipo, btnNuevaTarea);
+
+    btnNuevoEquipo.addEventListener("click", () => abrirFormulario(usuario));
 }
-// Trae la lista de usuarios del backend y saca a quien inició sesión (ya es el líder).
-// Si falla, por ejemplo por falta de permisos, la lista queda vacía
+
+async function abrirFormulario(usuario) {
+    if (abriendo || document.querySelector("#vistaEquipo")) return;
+
+    const content = document.querySelector("#content");
+    const vistaTareas = content?.querySelector(".dashboard-container");
+    if (!content || !vistaTareas) return;
+
+    abriendo = true;
+
+    try {
+        const usuarios = await obtenerUsuarios(usuario);
+
+        const vistaEquipo = document.createElement("div");
+        vistaEquipo.id = "vistaEquipo";
+        vistaEquipo.innerHTML = createEquipoTemplate({ usuario, usuarios });
+
+        vistaTareas.classList.add("d-none");
+        content.append(vistaEquipo);
+
+        const cerrar = () => {
+            vistaEquipo.remove();
+            vistaTareas.classList.remove("d-none");
+        };
+
+        iniciarBuscador(vistaEquipo);
+        iniciarChips(vistaEquipo);
+        iniciarEnvio(vistaEquipo, cerrar);
+
+        vistaEquipo
+            .querySelector("#btnCancelarEquipo")
+            .addEventListener("click", cerrar);
+    } finally {
+        abriendo = false;
+    }
+}
+
 async function obtenerUsuarios(usuario) {
     try {
         const respuesta = await equiposService.listarUsuarios();
-
-        // Mirá la consola para ver qué campos trae cada usuario. Borrar después
-        console.log("Usuarios del backend:", respuesta.usuarios);
 
         if (!respuesta.ok) return [];
 
@@ -51,7 +77,6 @@ async function obtenerUsuarios(usuario) {
     }
 }
 
-// Mientras se escribe, oculta a las personas que no coinciden con la búsqueda
 function iniciarBuscador(container) {
     const buscador = container.querySelector("#buscarUsuario");
     const items = container.querySelectorAll("#listaUsuarios li[data-nombre]");
@@ -66,8 +91,6 @@ function iniciarBuscador(container) {
     });
 }
 
-// Cada vez que se marca o desmarca a alguien, actualiza el contador
-// y vuelve a armar las etiquetas de "Seleccionados"
 function iniciarChips(container) {
     const checks = container.querySelectorAll('input[name="integrantes"]');
     const chips = container.querySelector("#chipsSeleccionados");
@@ -81,7 +104,7 @@ function iniciarChips(container) {
 
         marcados.forEach((check) => {
             const chip = document.createElement("span");
-            chip.className = "badge rounded-pill";
+            chip.className = "badge rounded-pill text-nowrap";
             chip.textContent = check.dataset.nombre;
             chips.appendChild(chip);
         });
@@ -90,10 +113,7 @@ function iniciarChips(container) {
     checks.forEach((check) => check.addEventListener("change", actualizar));
 }
 
-// Al crear el equipo hace dos cosas, en este orden:
-// 1) crea el equipo y recibe su id
-// 2) agrega a cada integrante usando su id
-function iniciarEnvio(container) {
+function iniciarEnvio(container, alTerminar) {
     const form = container.querySelector("#formCreateEquipo");
     const boton = form.querySelector('button[type="submit"]');
 
@@ -101,8 +121,7 @@ function iniciarEnvio(container) {
         e.preventDefault();
 
         const datos = new FormData(form);
-        const nombre = datos.get("nombre").trim();
-        const descripcion = datos.get("descripcion").trim();
+        const nombre = (datos.get("nombre") ?? "").trim();
         const integrantes = datos.getAll("integrantes");
 
         if (!nombre) {
@@ -115,18 +134,16 @@ function iniciarEnvio(container) {
             return;
         }
 
-        // Se bloquea el botón para que no se mande dos veces
         boton.disabled = true;
 
         try {
-            const respuesta = await equiposService.crearEquipo({ nombre, descripcion });
+            const respuesta = await equiposService.crearEquipo({ nombre });
 
-            if (!respuesta.ok) {
+            if (!respuesta.ok || !respuesta.id) {
                 alert(respuesta.mensaje || "No se pudo crear el equipo.");
                 return;
             }
 
-            // Se agregan los integrantes de a uno. Si alguno falla, se anota su nombre
             const noAgregados = [];
 
             for (const idUsuario of integrantes) {
@@ -147,7 +164,7 @@ function iniciarEnvio(container) {
                 alert(`El equipo se creó, pero no se pudo agregar a: ${nombres.join(", ")}.`);
             }
 
-            limpiarFormulario(container, form);
+            alTerminar();
         } catch (error) {
             console.error("Error al crear el equipo:", error);
             alert(error.message || "No se pudo crear el equipo.");
@@ -155,12 +172,4 @@ function iniciarEnvio(container) {
             boton.disabled = false;
         }
     });
-}
-
-// Deja el formulario vacío para poder crear otro equipo
-function limpiarFormulario(container, form) {
-    form.reset();
-    container.querySelector("#chipsSeleccionados").innerHTML = "";
-    container.querySelector("#contadorSeleccionados").textContent = "0";
-    container.querySelector("#buscarUsuario").dispatchEvent(new Event("input"));
 }
