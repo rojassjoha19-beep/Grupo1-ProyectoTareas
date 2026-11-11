@@ -103,6 +103,23 @@ class TareaController extends BaseController
             ], 401);
         }
 
+          if (empty($data['titulo'])) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'La fecha'
+            ], 400);
+        }
+         $errorFecha = $this->tareaModel->validarFecha($data['expired_at']);
+
+        if ($errorFecha) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => $errorFecha
+            ], 400);
+        }
+        
+
+
         $data = [
             'titulo' => trim($datos['titulo'] ?? ''),
             'descripcion' => trim($datos['descripcion'] ?? ''),
@@ -136,13 +153,13 @@ class TareaController extends BaseController
         ], 500);
     }
 
-/**
- * PATCH /api/tareas/{id_tarea}
- *
- * Actualiza una tarea existente.
- */
-public function update($id_tarea = null)
-{
+    /**
+     * PATCH /api/tareas/{id_tarea}
+     *
+     * Actualiza una tarea existente.
+     */
+    public function update($id_tarea = null)
+    {
     if (!$id_tarea) {
         $this->jsonResponse([
             'ok' => false,
@@ -166,6 +183,28 @@ public function update($id_tarea = null)
             'mensaje' => 'El título es obligatorio.'
         ], 400);
     }
+
+            $errorFecha = $this->tareaModel->validarFecha($data['expired_at']);
+
+
+        if ($errorFecha) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => $errorFecha
+            ], 400);
+        }
+           $actual = $this->tareaModel->tareaById($data['id_tarea']);
+
+        if (substr($actual->expired_at, 0, 10) !== $data['expired_at']) {
+            $errorFecha = $this->tareaModel->validarFecha($data['expired_at']);
+
+            if ($errorFecha) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => $errorFecha
+                ], 400);
+            }
+        }
 
     $actualizado =
         $this->tareaModel->updateTarea($data);

@@ -245,5 +245,28 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
 
         return $this->db->execute();
     }
-}
 
+    /**
+ * Valida la fecha de vencimiento de una tarea.
+ * Devuelve null si es válida, o el mensaje de error.
+ */
+public function validarFecha($fecha)
+{
+    if (empty($fecha)) {
+        return null; 
+    }
+
+    $fechaVenc = DateTimeImmutable::createFromFormat('Y-m-d', $fecha);
+    $errores  = DateTimeImmutable::getLastErrors();
+
+    if (!$fechaVenc || ($errores && ($errores['warning_count'] || $errores['error_count']))) {
+        return 'La fecha de vencimiento no tiene un formato válido.';
+    }
+
+    if ($fechaVenc < new DateTimeImmutable('today')) {
+        return 'La fecha de vencimiento no puede ser anterior a hoy.';
+    }
+
+    return null;
+}
+}
