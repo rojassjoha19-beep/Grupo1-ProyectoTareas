@@ -1,4 +1,3 @@
-
 import { renderDashboardLayout } from "../../layout/dashboardLayout.js";
 import { usuarioDashboardTemplate } from "../../templates/usuario/usuarioDashboardTemplate.js";
 
@@ -9,19 +8,36 @@ import { initDeleteTarea } from "../tareas/deleteTarea.js";
 import { initFilterTarea } from "../tareas/filterTareas.js";
 
 export const renderUsuarioDashboard = async (container) => {
-    const cargado = await renderDashboardLayout(
+
+    // Renderizar layout y obtener usuario
+    const usuario = await renderDashboardLayout(
         container,
         usuarioDashboardTemplate()
     );
 
-    if (!cargado) return;
+    if (!usuario) return;
 
-    // Inicializar funcionalidades
-    initCreateTarea();
+    // Obtener permisos
+    const permisos = Array.isArray(usuario.permisos)
+        ? usuario.permisos
+        : [];
+
+    // Mostrar u ocultar botón según permisos
+    const btnNuevaTarea = container.querySelector("#btnNuevaTarea");
+
+    if (permisos.includes("tareas.crear")) {
+        initCreateTarea();
+    } else {
+        btnNuevaTarea?.remove();
+    }
+
+    // Inicializar funcionalidades existentes
     initUpdateTarea();
     initDeleteTarea();
     initFilterTarea();
 
-    // Cargar tareas desde el backend
-    await getTareas();
+    // Cargar tareas si tiene permiso
+    if (permisos.includes("tareas.ver")) {
+        await getTareas();
+    }
 };

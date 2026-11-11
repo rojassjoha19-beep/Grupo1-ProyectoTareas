@@ -1,4 +1,3 @@
-
 import { renderHome } from "./modules/home/homeDashboard.js";
 import { authService } from "./services/authService.js";
 
@@ -9,40 +8,46 @@ import {
     renderUpdatePassword,
 } from "./modules/auth/index.js";
 
-import { renderDashboard } from "./modules/dashboard.js";
 import { renderAdminDashboard } from "./modules/admin/adminDashboard.js";
 import { renderUsuarioDashboard } from "./modules/usuario/usuarioDashboard.js";
 import { renderUsuariosAdminDashBoard } from "./modules/admin/usuariosAdminDashboard.js";
 import { renderLiderDashboard } from "./modules/lider/liderDashboard.js";
+import { renderTareasAdminDashboard } from "./modules/admin/tareasAdminDashboard.js";
 
 const basePath = "/Grupo1-ProyectoTareas";
 
+// Rutas de la aplicación
 const routes = {
     "/": renderHome,
     "/login": renderLogin,
     "/register": renderRegister,
     "/reset-password": renderResetPassword,
     "/update-password": renderUpdatePassword,
-    "/dashboard": renderDashboard,
+
     "/dashboard/admin": renderAdminDashboard,
+    "/dashboard/admin/tareas": renderTareasAdminDashboard,
     "/dashboard/admin/usuarios": renderUsuariosAdminDashBoard,
     "/dashboard/lider": renderLiderDashboard,
     "/dashboard/usuario": renderUsuarioDashboard,
 };
 
+// Dashboard correspondiente a cada rol
 const rutasPorRol = {
     1: "/dashboard/admin",
     2: "/dashboard/lider",
     3: "/dashboard/usuario",
 };
 
+// Roles autorizados para cada ruta
 const rolesPermitidos = {
     "/dashboard/admin": [1],
+    "/dashboard/admin/tareas": [1],
     "/dashboard/admin/usuarios": [1],
     "/dashboard/lider": [2],
     "/dashboard/usuario": [3],
 };
 
+// Obtener la ruta sin el basePath
 const getNormalizedPath = () => {
     const path = window.location.pathname;
 
@@ -71,9 +76,10 @@ export const router = {
             return;
         }
 
-        // Limpiar la vista anterior antes de validar el acceso
+        // Limpiar contenido anterior
         container.innerHTML = "";
 
+        // Comprobar si es una ruta protegida
         const esRutaProtegida =
             path === "/dashboard" ||
             path.startsWith("/dashboard/");
@@ -82,9 +88,9 @@ export const router = {
             try {
                 const response = await authService.checkSession();
 
-                // Evitar renderizar una navegación anterior
                 if (navegacion !== navegacionActual) return;
 
+                // Verificar sesión
                 if (!response.success || !response.user) {
                     router.navigateTo("/login");
                     return;
@@ -93,19 +99,20 @@ export const router = {
                 const rolId = Number(response.user.rol_id);
                 const rutaUsuario = rutasPorRol[rolId];
 
+                // Validar rol
                 if (!rutaUsuario) {
                     console.error("Rol no válido:", rolId);
                     router.navigateTo("/login");
                     return;
                 }
 
-                // Redirigir /dashboard según el rol
+                // Redirigir al dashboard correspondiente
                 if (path === "/dashboard") {
                     router.navigateTo(rutaUsuario);
                     return;
                 }
 
-                // Comprobar autorización
+                // Verificar permisos
                 const roles = rolesPermitidos[path];
 
                 if (!roles || !roles.includes(rolId)) {
@@ -128,6 +135,7 @@ export const router = {
 
         if (navegacion !== navegacionActual) return;
 
+        // Obtener función correspondiente a la ruta
         const renderFn = routes[path];
 
         if (typeof renderFn !== "function") {
@@ -136,6 +144,7 @@ export const router = {
             return;
         }
 
+        // Renderizar página
         try {
             await renderFn(container);
         } catch (error) {
@@ -158,6 +167,7 @@ export const router = {
     },
 
     init: () => {
+        // Navegación sin recargar la página
         document.addEventListener("click", (e) => {
             const link = e.target.closest("a[data-link]");
 
@@ -172,6 +182,7 @@ export const router = {
             }
         });
 
+        // Navegación con botones del navegador
         window.addEventListener("popstate", () => {
             router.handleRoute();
         });

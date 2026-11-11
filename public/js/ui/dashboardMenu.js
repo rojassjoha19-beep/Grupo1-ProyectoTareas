@@ -32,6 +32,11 @@ export const dashboardMenu = (rolId) => {
                         Panel general
                     </a>
 
+                    <a href="/dashboard/admin/tareas" data-link>
+                        <i class="bi bi-list-task"></i>
+                        Gestión de tareas
+                    </a>
+
                     <a href="/dashboard/admin/usuarios" data-link>
                         <i class="bi bi-people"></i>
                         Gestión de usuarios

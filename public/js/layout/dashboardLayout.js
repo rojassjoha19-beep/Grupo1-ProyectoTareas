@@ -4,33 +4,30 @@ import { authService } from "../services/authService.js";
 import { RUTA_AVATAR } from "../config.js";
 
 export const renderDashboardLayout = async (container, contenido) => {
+
     // Comprobar sesión
     const response = await authService.checkSession();
-
-    console.log("Usuario:", response.user);
-    console.log("Rol:", response.user?.rol_id);    
 
     if (!response.success || !response.user) {
         window.location.href = "/Grupo1-ProyectoTareas/login";
         return false;
     }
 
-
-    const rolId = Number(response.user.rol_id);
+    const usuario = response.user;
+    const rolId = Number(usuario.rol_id);
 
     if (![1, 2, 3].includes(rolId)) {
         console.error("Rol no válido:", rolId);
         return false;
     }
-   
-    // Renderizar Dashboard con el contenido recibido
+
+    // Renderizar dashboard
     container.innerHTML = dashboardLayoutTemplate(contenido);
 
     // Renderizar menú lateral
     const menuContainer = container.querySelector("#dashboardMenu");
 
     if (menuContainer) {
-        
         menuContainer.innerHTML = dashboardMenu(rolId);
     }
 
@@ -39,6 +36,7 @@ export const renderDashboardLayout = async (container, contenido) => {
     const sidebarClose = container.querySelector("#sidebarClose");
 
     if (sidebarToggle && sidebarClose && menuContainer) {
+
         const actualizarMenu = (abierto) => {
             menuContainer.classList.toggle("menu-cerrado", !abierto);
             sidebarToggle.classList.toggle("d-none", abierto);
@@ -62,12 +60,12 @@ export const renderDashboardLayout = async (container, contenido) => {
     const btnCerrarSesion = container.querySelector("#btnCerrarSesion");
 
     if (userName) {
-        userName.textContent = response.user.nombre;
+        userName.textContent = usuario.nombre;
     }
 
     if (userAvatar) {
-        userAvatar.src = response.user.avatar
-            ? RUTA_AVATAR + response.user.avatar
+        userAvatar.src = usuario.avatar
+            ? RUTA_AVATAR + usuario.avatar
             : RUTA_AVATAR + "img_default.png";
     }
 
@@ -81,11 +79,13 @@ export const renderDashboardLayout = async (container, contenido) => {
                     window.location.href =
                         "/Grupo1-ProyectoTareas/login";
                 }
+
             } catch (error) {
                 console.error("Error al cerrar sesión:", error);
             }
         });
     }
 
-    return true;
+    // Devolver los datos del usuario
+    return usuario;
 };
