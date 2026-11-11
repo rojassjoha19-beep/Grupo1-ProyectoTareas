@@ -1,19 +1,27 @@
+// Importo el service 
 import { equiposService } from "../../services/equiposService.js";
+// Importa el template que dibuja el formulario de crear equipo
 import { createEquipoTemplate } from "../../templates/equipos/createEquipoTemplate.js";
 
+// Esta función saca las mayúsculas y los acentos.
 const normalizar = (texto) =>
     texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+// Evita que el formulario se abra dos veces si se hace clic rápido
 let abriendo = false;
 
+// Lo llama el dashboard al cargar.
+// Si la persona tiene permiso para crear equipos, agrega el botón "Nuevo equipo"
 export function initCreateEquipo(usuario) {
     const permisos = Array.isArray(usuario.permisos) ? usuario.permisos : [];
 
+    // Sin el permiso "equipos.crear" no se muestra nada
     if (!permisos.includes("equipos.crear")) return;
 
     const btnNuevaTarea = document.querySelector("#btnNuevaTarea");
     if (!btnNuevaTarea) return;
 
+    // Se creo el botón "Nuevo equipo" 
     const btnNuevoEquipo = document.createElement("button");
     btnNuevoEquipo.id = "btnNuevoEquipo";
     btnNuevoEquipo.type = "button";
@@ -28,9 +36,12 @@ export function initCreateEquipo(usuario) {
     btnNuevoEquipo.addEventListener("click", () => abrirFormulario(usuario));
 }
 
+// Se sconde la vista de tareas sin borrarla, para que sus botones sigan funcionando
+// y tambien  muestra el formulario de crear equipo en su lugar
 async function abrirFormulario(usuario) {
     if (abriendo || document.querySelector("#vistaEquipo")) return;
-
+    
+     // Busca la zona del contenido y la vista de tareas del dashboard
     const content = document.querySelector("#content");
     const vistaTareas = content?.querySelector(".dashboard-container");
     if (!content || !vistaTareas) return;
@@ -39,6 +50,7 @@ async function abrirFormulario(usuario) {
 
     try {
         const usuarios = await obtenerUsuarios(usuario);
+         // Se arma el formulario con la lista de usuarios y se agrega al contenido
 
         const vistaEquipo = document.createElement("div");
         vistaEquipo.id = "vistaEquipo";
@@ -46,24 +58,28 @@ async function abrirFormulario(usuario) {
 
         vistaTareas.classList.add("d-none");
         content.append(vistaEquipo);
-
+        
+        // Esta función cierra el formulario y vuelve a mostrar las tareas
         const cerrar = () => {
             vistaEquipo.remove();
             vistaTareas.classList.remove("d-none");
         };
-
+        // Se activan las partes del formulario como el buscador, las etiquetas y el envío
         iniciarBuscador(vistaEquipo);
         iniciarChips(vistaEquipo);
         iniciarEnvio(vistaEquipo, cerrar);
-
+        // El botón Cancelar también cierra el formulario
         vistaEquipo
             .querySelector("#btnCancelarEquipo")
             .addEventListener("click", cerrar);
     } finally {
+        // Esto se ejecuta siempre, aunque haya un error, así se puede volver a intentar
         abriendo = false;
     }
 }
 
+// Trae la lista de usuarios del backend y saca a quien inició sesión (ya es el líder).
+// Si falla, por ejemplo por falta de permisos, la lista queda vacía
 async function obtenerUsuarios(usuario) {
     try {
         const respuesta = await equiposService.listarUsuarios();
@@ -76,7 +92,7 @@ async function obtenerUsuarios(usuario) {
         return [];
     }
 }
-
+// Buscad el usuario y mientras se escribe, escondo a los que no coinciden
 function iniciarBuscador(container) {
     const buscador = container.querySelector("#buscarUsuario");
     const items = container.querySelectorAll("#listaUsuarios li[data-nombre]");
@@ -90,6 +106,8 @@ function iniciarBuscador(container) {
         });
     });
 }
+// Cada vez que se marca o desmarca a alguien, actualiza el contador
+// y vuelve a armar las etiquetas de "Seleccionados"
 
 function iniciarChips(container) {
     const checks = container.querySelectorAll('input[name="integrantes"]');
@@ -97,6 +115,7 @@ function iniciarChips(container) {
     const contador = container.querySelector("#contadorSeleccionados");
 
     const actualizar = () => {
+        // Me quedo solo con los checkboxes que están marcados
         const marcados = [...checks].filter((check) => check.checked);
 
         contador.textContent = marcados.length;
@@ -112,6 +131,9 @@ function iniciarChips(container) {
 
     checks.forEach((check) => check.addEventListener("change", actualizar));
 }
+// 1) crea el equipo y recibe su id
+// 2) agrega a cada integrante usando ese id
+// Cuando termina, vuelve a mostrar las tareas
 
 function iniciarEnvio(container, alTerminar) {
     const form = container.querySelector("#formCreateEquipo");
@@ -119,7 +141,8 @@ function iniciarEnvio(container, alTerminar) {
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
-
+        
+        // Se lee completó al usuario
         const datos = new FormData(form);
         const nombre = (datos.get("nombre") ?? "").trim();
         const integrantes = datos.getAll("integrantes");
@@ -133,7 +156,7 @@ function iniciarEnvio(container, alTerminar) {
             alert("El nombre no puede superar los 50 caracteres.");
             return;
         }
-
+       // Bloquea el botón para que no se pueda apretar dos veces
         boton.disabled = true;
 
         try {
@@ -154,7 +177,7 @@ function iniciarEnvio(container, alTerminar) {
                     noAgregados.push(idUsuario);
                 }
             }
-
+             // Avisa cómo salió todo: bien, o a quiénes no se pudo agregar
             if (noAgregados.length === 0) {
                 alert("Equipo creado correctamente.");
             } else {
@@ -163,7 +186,7 @@ function iniciarEnvio(container, alTerminar) {
                 );
                 alert(`El equipo se creó, pero no se pudo agregar a: ${nombres.join(", ")}.`);
             }
-
+         // Cierra el formulario
             alTerminar();
         } catch (error) {
             console.error("Error al crear el equipo:", error);

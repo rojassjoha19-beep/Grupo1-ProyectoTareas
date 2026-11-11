@@ -1,3 +1,4 @@
+// Si un nombre trae símbolos raros
 const esc = (valor) =>
     String(valor ?? '').replace(/[&<>"']/g, (c) => ({
         '&': '&amp;',
@@ -6,13 +7,19 @@ const esc = (valor) =>
         '"': '&quot;',
         "'": '&#39;'
     }[c]));
-
+// Junta nombre y apellido. Si alguien no tiene apellido, deja solo el nombre
 const nombreCompleto = (u = {}) =>
     [u.nombre, u.apellido].filter(Boolean).join(' ');
-
+/*
+  Devuelve solo el formulario, porque se muestra dentro del dashboard
+  - usuario: la persona que inició sesión
+  - usuarios: la gente que se puede elegir como integrante
+*/
 export const createEquipoTemplate = ({ usuario = {}, usuarios = [] } = {}) => {
+    // El líder es quien crea el equipo, por eso el select muestra solo a esa persona
     const opcionLider = `<option value="${esc(usuario.id)}" selected>${esc(nombreCompleto(usuario) || 'Tú')} (tú)</option>`;
-
+    
+     // Lista de integrantes: cada checkbox guarda el id de la persona
     const itemsUsuarios = usuarios.length
         ? usuarios.map((u) => `
                             <li class="list-group-item px-0" data-nombre="${esc(nombreCompleto(u))}">
