@@ -44,13 +44,14 @@ class AuthController extends BaseController {
         }
 
         $user = $this->authModel->buscar_por_mail(['email' => $data['email']]);
-
+            
         // Si el usuario existe y recuperó la contraseña
         if ($user && isset($user->pass)) {
 
             // Limpiamos bytes nulos o espacios invisibles que deja AES_DECRYPT de MySQL
             $dbPass = trim((string)$user->pass);
             $inputPass = trim((string)$data['password']);
+
 
             if ($dbPass === $inputPass) {
                 $_SESSION['user_id']     = $user->id;
@@ -60,18 +61,20 @@ class AuthController extends BaseController {
                 // Guardamos el rol del usuario en la sesión
                 $_SESSION['user_rol_id'] = (int)$user->rol_id;
 
+                //buscar permisos del usuario por rol
+                $permisos = $this->authModel->permiso_por_rol((int)$user->rol_id);
+
                 $this->jsonResponse([
                     'success' => true, 
                     'message' => 'Sesión iniciada correctamente',
-
-
                     // Devolvemos los datos del usuario para que el front-end pueda almacenarlos en su estado
                     'user'    => [
                         'id'     => (int)$user->id,
                         'nombre' => $user->nombre,
                         'email'  => $user->email,
                         'avatar' => $user->avatar ?? null,
-                        'rol_id' => (int)$user->rol_id
+                        'rol_id' => (int)$user->rol_id,
+                        'permisos' => $permisos
                     ]
                 ]);
             }

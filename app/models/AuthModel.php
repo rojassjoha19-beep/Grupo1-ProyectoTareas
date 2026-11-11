@@ -30,21 +30,42 @@ class AuthModel {
 		}
 	}
 
-    	/* Método para buscar el mail y la contraseña para comprobar si existe y poder loguear*/
+    	/* Método para buscar el mail y la contraseña para comprobar si existe y poder loguear
+		*	Devuelve un objeto con los datos del usuario.
+		*/
 
 	public function buscar_por_mail($data)
 	{
-		$this->db->query("SELECT id, nombre,apellido, email,rol_id, avatar, aes_decrypt(pass, 'keyword') AS pass 
-							  FROM usuario
-							  WHERE usuario.email =:email
-							  AND deleted_at IS NULL");
+		$this->db->query("SELECT 
+						usuario.id, usuario.nombre, usuario.apellido, usuario.email,
+                         usuario.rol_id, usuario.avatar,
+                         rol.nombre AS rol,
+                         aes_decrypt(usuario.pass, 'keyword') AS pass
+                  FROM usuario
+                  INNER JOIN rol ON rol.id = usuario.rol_id
+                  WHERE usuario.email = :email
+                  AND usuario.deleted_at IS NULL");
 		$this->db->bind('email', $data['email']);
 		
 		$result = $this->db->register();
 		return $result;
 	}
+			
+	public function permiso_por_rol ($rol_id)
+	{
+		$this->db->query(
+			"SELECT permiso.nombre 
+		FROM rol_permiso 
+		INNER JOIN permiso 
+		ON permiso.id = rol_permiso.permiso_id
+		WHERE rol_permiso.rol_id = :rol_id"
+		);
 
-
+		$this->db->bind('rol_id',(int) $rol_id);
+		
+		//nombre de permisos segun id de rol
+		return array_column($this->db->registers(), 'nombre');
+	}
 
 
 
