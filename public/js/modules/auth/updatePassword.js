@@ -1,4 +1,4 @@
-import { updatePasswordTemplate } from "../../templates/authTemplates.js";
+import { updatePasswordTemplate } from "../../templates/auth/authTemplates.js";
 import { initPasswordToggle } from "../../ui/togglePassword.js";
 import { authService } from "../../services/authService.js";
 import { router } from "../../router.js";
