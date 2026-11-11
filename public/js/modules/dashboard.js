@@ -5,6 +5,7 @@ import { getTareas } from "./tareas/getTareas.js";
 import { initFilterTarea } from "./tareas/filterTareas.js";
 import { initUpdateTarea } from "./tareas/updateTarea.js";
 import { initDeleteTarea } from "./tareas/deleteTarea.js";
+import { initCreateEquipo } from "./equipos/createEquipo.js"; 
 
 export const renderDashboard = async (container) => {
     try {
@@ -21,8 +22,13 @@ export const renderDashboard = async (container) => {
         initUpdateTarea();
         initDeleteTarea();
         initFilterTarea();
+<<<<<<< HEAD
 
         // Cargar listado de tareas
+=======
+        initCreateEquipo(response.user);
+        //Cargar listado de tareas
+>>>>>>> 54df5dc1cd768582fac15e7d90773062687d86e4
         await getTareas();
 
     } catch (error) {
