@@ -13,6 +13,8 @@ import { renderUsuarioDashboard } from "./modules/usuario/usuarioDashboard.js";
 import { renderUsuariosAdminDashBoard } from "./modules/admin/usuariosAdminDashboard.js";
 import { renderLiderDashboard } from "./modules/lider/liderDashboard.js";
 import { renderTareasAdminDashboard } from "./modules/admin/tareasAdminDashboard.js";
+import { renderLiderUsuarios } from "./modules/lider/liderUsuarios.js";
+import { renderLiderEquipos } from "./modules/lider/liderEquipos.js";
 
 const basePath = "/Grupo1-ProyectoTareas";
 
@@ -28,6 +30,8 @@ const routes = {
     "/dashboard/admin/tareas": renderTareasAdminDashboard,
     "/dashboard/admin/usuarios": renderUsuariosAdminDashBoard,
     "/dashboard/lider": renderLiderDashboard,
+    "/dashboard/lider/usuarios": renderLiderUsuarios,
+    "/dashboard/lider/equipos": renderLiderEquipos,
     "/dashboard/usuario": renderUsuarioDashboard,
 };
 
@@ -44,6 +48,8 @@ const rolesPermitidos = {
     "/dashboard/admin/tareas": [1],
     "/dashboard/admin/usuarios": [1],
     "/dashboard/lider": [2],
+    "/dashboard/lider/usuarios": [2],
+    "/dashboard/lider/equipos": [2],
     "/dashboard/usuario": [3],
 };
 

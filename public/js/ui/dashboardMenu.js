@@ -44,9 +44,19 @@ export const dashboardMenu = (rolId) => {
                 ` : ""}
 
                 ${rolId === 2 ? `
-                    <a href="${rutaDashboard}" data-link>
+                    <a href="/dashboard/lider/tareas" data-link>
                         <i class="bi bi-list-task"></i>
-                        Tareas del equipo
+                        Tareas
+                    </a>
+
+                    <a href="/dashboard/lider/usuarios" data-link>
+                        <i class="bi bi-people"></i>
+                        Usuarios
+                    </a>
+
+                    <a href="/dashboard/lider/equipos" data-link>
+                        <i class="bi bi-people-fill"></i>
+                        Equipos
                     </a>
                 ` : ""}
 
