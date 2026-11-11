@@ -26,32 +26,27 @@ export const dashboardMenu = (rolId) => {
 
             <nav class="menu-nav">
 
-                <a href="${rutaDashboard}" data-link>
-                    <i class="bi bi-speedometer2"></i>
-                    Dashboard
-                </a>
-
                 ${rolId === 1 ? `
-                    <a href="/admin/usuarios" data-link>
-                        <i class="bi bi-people"></i>
-                        Gestión de usuarios
+                    <a href="${rutaDashboard}" data-link>
+                        <i class="bi bi-speedometer2"></i>
+                        Panel general
                     </a>
 
-                    <a href="/admin/proyectos" data-link>
-                        <i class="bi bi-folder"></i>
-                        Proyectos
+                    <a href="/dashboard/admin/usuarios" data-link>
+                        <i class="bi bi-people"></i>
+                        Gestión de usuarios
                     </a>
                 ` : ""}
 
                 ${rolId === 2 ? `
-                    <a href="/dashboard/lider" data-link>
+                    <a href="${rutaDashboard}" data-link>
                         <i class="bi bi-list-task"></i>
                         Tareas del equipo
                     </a>
                 ` : ""}
 
                 ${rolId === 3 ? `
-                    <a href="/dashboard/usuario" data-link>
+                    <a href="${rutaDashboard}" data-link>
                         <i class="bi bi-list-task"></i>
                         Mis tareas
                     </a>

@@ -6,23 +6,22 @@ import { RUTA_AVATAR } from "../config.js";
 export const renderDashboardLayout = async (container, contenido) => {
     // Comprobar sesión
     const response = await authService.checkSession();
-    
+
+    console.log("Usuario:", response.user);
+    console.log("Rol:", response.user?.rol_id);    
 
     if (!response.success || !response.user) {
         window.location.href = "/Grupo1-ProyectoTareas/login";
         return false;
     }
-    console.log("respuesta ", response)
-    // Verificar usuario y permisos del backend
-    console.log("login Usuario:", response.user);
-    console.log("login Permisos:", response.user.permisos);
 
 
-    // Obtener permisos
-    const permisos = Array.isArray(response.user.permisos)
-        ? response.user.permisos
-        : [];
+    const rolId = Number(response.user.rol_id);
 
+    if (![1, 2, 3].includes(rolId)) {
+        console.error("Rol no válido:", rolId);
+        return false;
+    }
    
     // Renderizar Dashboard con el contenido recibido
     container.innerHTML = dashboardLayoutTemplate(contenido);
@@ -32,7 +31,7 @@ export const renderDashboardLayout = async (container, contenido) => {
 
     if (menuContainer) {
         
-        menuContainer.innerHTML = dashboardMenu(permisos);
+        menuContainer.innerHTML = dashboardMenu(rolId);
     }
 
     // Abrir y cerrar menú
