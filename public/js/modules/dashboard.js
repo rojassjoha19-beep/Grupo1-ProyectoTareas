@@ -22,13 +22,8 @@ export const renderDashboard = async (container) => {
         initUpdateTarea();
         initDeleteTarea();
         initFilterTarea();
-<<<<<<< HEAD
 
         // Cargar listado de tareas
-=======
-        initCreateEquipo(response.user);
-        //Cargar listado de tareas
->>>>>>> 54df5dc1cd768582fac15e7d90773062687d86e4
         await getTareas();
 
     } catch (error) {
