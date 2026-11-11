@@ -8,7 +8,7 @@ import { getTareas } from "./tareas/getTareas.js";
 import { initFilterTarea } from "./tareas/filterTareas.js";
 import { initUpdateTarea } from "./tareas/updateTarea.js";
 import { initDeleteTarea } from "./tareas/deleteTarea.js";
-import { initCreateEquipo } from "./equipos/createEquipo.js"; 
+
 
 export const renderDashboard = async (container) => {
     try {
@@ -107,7 +107,7 @@ export const renderDashboard = async (container) => {
         initUpdateTarea();
         initDeleteTarea();
         initFilterTarea();
-        initCreateEquipo(response.user);
+   
         //Cargar listado de tareas
         await getTareas();
 

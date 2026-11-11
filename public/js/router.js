@@ -1,5 +1,5 @@
 import { renderHome } from "./modules/home.js";
-
+import { renderCrearEquipo } from "./modules/equipos/createEquipo.js";
 import {
   renderLogin,
   renderResetPassword,
@@ -16,6 +16,8 @@ const routes = {
   "/reset-password": renderResetPassword,
   "/update-password": renderUpdatePassword,
   "/dashboard": renderDashboard,
+  // Ruta para acceder a la pantalla de creación de equipos
+   "/equipos/crear": renderCrearEquipo,
 };
 
 const getNormalizedPath = () => {

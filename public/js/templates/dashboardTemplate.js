@@ -98,7 +98,16 @@ export const dashboardTemplate = () => `
                                 Gestión dinámica de actividades
                             </p>
                         </div>
-
+                    <div class="d-flex gap-2">
+                            <a
+                     href="/Grupo1-ProyectoTareas/equipos/crear"
+                     class="btn btn-outline-success"
+                    id="btnCrearEquipo"
+                     data-link >
+                    <i class="bi bi-people me-1"></i>
+                  Crear equipo
+                </a>
+             </div>
                         <button
                             id="btnNuevaTarea"
                             type="button"
@@ -108,8 +117,8 @@ export const dashboardTemplate = () => `
                             Nueva Tarea
                         </button>
 
-                    </div>
-
+                      </div>
+                   </div>
                     <!-- Filtros -->
                     <div class="dashboard-filters row mb-4">
                         <div class="col-md-4">

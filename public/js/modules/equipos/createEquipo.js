@@ -1,3 +1,4 @@
+import { authService } from "../../services/authService.js";
 // Importo el service 
 import { equiposService } from "../../services/equiposService.js";
 // Importa el template que dibuja el formulario de crear equipo
@@ -12,32 +13,16 @@ let abriendo = false;
 
 // Lo llama el dashboard al cargar.
 // Si la persona tiene permiso para crear equipos, agrega el botón "Nuevo equipo"
-export function initCreateEquipo(usuario) {
-    const permisos = Array.isArray(usuario.permisos) ? usuario.permisos : [];
+export async function renderCrearEquipo(container) {
+  try {
+        const sesion = await authService.checkSession();
 
-    // Sin el permiso "equipos.crear" no se muestra nada
-    if (!permisos.includes("equipos.crear")) return;
+        console.log("Respuesta de sesión:", sesion);
 
-    const btnNuevaTarea = document.querySelector("#btnNuevaTarea");
-    if (!btnNuevaTarea) return;
-
-    // Se creo el botón "Nuevo equipo" 
-    const btnNuevoEquipo = document.createElement("button");
-    btnNuevoEquipo.id = "btnNuevoEquipo";
-    btnNuevoEquipo.type = "button";
-    btnNuevoEquipo.className = "btn btn-outline-secondary";
-    btnNuevoEquipo.innerHTML = '<i class="bi bi-people me-1"></i>Nuevo equipo';
-
-    const grupo = document.createElement("div");
-    grupo.className = "d-flex gap-2";
-    btnNuevaTarea.replaceWith(grupo);
-    grupo.append(btnNuevoEquipo, btnNuevaTarea);
-
-    btnNuevoEquipo.addEventListener("click", () => abrirFormulario(usuario));
+    } catch (error) {
+        console.error("Error al consultar la sesión:", error);
+    }
 }
-
-// Se sconde la vista de tareas sin borrarla, para que sus botones sigan funcionando
-// y tambien  muestra el formulario de crear equipo en su lugar
 async function abrirFormulario(usuario) {
     if (abriendo || document.querySelector("#vistaEquipo")) return;
     
