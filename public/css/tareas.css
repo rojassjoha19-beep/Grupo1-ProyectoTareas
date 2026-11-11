@@ -1,0 +1,71 @@
+/* Tarjeta del modal: esquinas redondeadas, sin borde y con sombra */
+.modal-content {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+/* Saca las líneas grises que Bootstrap pone arriba y abajo */
+.modal-header,
+.modal-footer {
+    border: 0;
+}
+
+/* El título: ícono y texto en fila, en negrita y verde oscuro */
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: var(--color-terciario);
+}
+
+/* Ícono del título en el verde del proyecto (solo si es una etiqueta <i>) */
+.modal-title i {
+    color: var(--color-secundario);
+}
+
+/* Etiquetas de los campos: más chicas y en gris */
+.modal-body .form-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Al hacer clic en un campo, el borde y el resplandor se ven en verde */
+.modal .form-control:focus,
+.modal .form-select:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 0.25rem rgba(143, 211, 168, 0.35);
+}
+
+/* Botón principal ("Crear tarea"): igual al "Ingresar" del login */
+.modal .btn-primary {
+    background-color: var(--color-secundario);
+    border: 1px solid var(--color-secundario);
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: background-color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+/* Al pasar el mouse o enfocar, se oscurece al verde más fuerte */
+.modal .btn-primary:hover,
+.modal .btn-primary:focus {
+    background-color: var(--color-terciario);
+    border-color: var(--color-terciario);
+    color: white;
+}
+
+/* Botón "Cancelar": sin relleno y con borde gris */
+.modal .btn-secondary {
+    background-color: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    border-radius: 10px;
+}
+/* Al pasar el mouse, se rellena de gris */
+.modal .btn-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
