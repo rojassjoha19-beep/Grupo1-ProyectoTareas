@@ -20,18 +20,93 @@
 }
 
 /* Botón principal */
+/* Botón principal */
 .btn-main {
     background-color: var(--color-secundario);
     border: 1px solid var(--color-secundario);
     color: white;
     border-radius: 10px;
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease,
+                border-color 0.2s ease;
 }
 
 .btn-main:hover {
     background-color: var(--color-terciario);
     border-color: var(--color-terciario);
     color: white;
-    transform: translateY(-2px);
+    transform: none;
+}
+/* Botón secundario */
+.btn-secondary-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 10px 18px;
+
+    background-color: transparent;
+    color: var(--color-terciario);
+    border: 1px solid var(--color-secundario);
+    border-radius: 8px;
+
+    font-family: var(--fuente-principal);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+/* Botón secundario */
+.btn.btn-secondary-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    height: 36px;
+    min-height: 36px;
+    padding: 0 12px;
+
+    background-color: var(--color-primario);
+    color: var(--color-terciario);
+    border: 1px solid var(--color-primario);
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    transition: background-color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+/* Hover sin movimiento */
+.btn.btn-secondary-custom:hover {
+    background-color: var(--color-secundario);
+    border-color: var(--color-secundario);
+    color: white;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Al presionar */
+.btn.btn-secondary-custom:active {
+    background-color: var(--color-terciario);
+    border-color: var(--color-terciario);
+    color: white;
+    transform: none;
+}
+
+/* Foco */
+.btn.btn-secondary-custom:focus-visible {
+    outline: 2px solid var(--color-terciario);
+    outline-offset: 2px;
 }
