@@ -15,9 +15,19 @@ class AuthController extends BaseController {
         }
             //buscar usuario en base, llama a a la funcion buscarUsuario del modelo UsuarioModel
             $usuario = $this->model('UsuarioModel')->buscarUsuario((int)$_SESSION['user_id']);
+
+            // Si el usuario ya no existe, se corta
+    if (!$usuario) {
+        $this->jsonResponse(['success' => false, 'message' => 'Usuario no encontrado'], 401);
+    }
             // Guarda el rol del usuario en la sesión
 
             $_SESSION['user_rol_id'] = (int)$usuario->rol_id;
+
+            $permisos = $this->authModel->permiso_por_rol((int)$usuario->rol_id);
+
+
+
             // Devuelve la información del usuario en json
             $this->jsonResponse([
                 'success' => true,
@@ -26,7 +36,8 @@ class AuthController extends BaseController {
                     'nombre' => $_SESSION['user_name'],
                     'email'  => $_SESSION['user_email'] ,
                     'avatar' => $_SESSION['user_avatar'] ,
-                    'rol_id' => $_SESSION['user_rol_id']
+                    'rol_id' => $_SESSION['user_rol_id'],
+                    'permisos' => $permisos
                 ]
             ]);
         
