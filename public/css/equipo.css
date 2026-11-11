@@ -1,0 +1,31 @@
+.equipo-page a:not(.btn) {
+    color: var(--color-secundario);
+}
+
+.equipo-page a:not(.btn):hover {
+    color: var(--color-terciario);
+}
+/* El botón principal mantiene el texto blanco */
+.equipo-page .btn-main {
+    color: white;
+}
+
+/* Etiquetas de los integrantes elegidos */
+.equipo-page .badge {
+    background-color: var(--color-primario);
+    color: var(--color-terciario);
+    font-weight: 600;
+}
+
+/* Al hacer clic en un campo, el borde se pone verde en vez de azul */
+.equipo-page .form-control:focus,
+.equipo-page .form-select:focus,
+.equipo-page .form-check-input:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 0.25rem rgba(143, 211, 168, 0.35);
+}
+/* Checkbox tildado en verde */
+.equipo-page .form-check-input:checked {
+    background-color: var(--color-secundario);
+    border-color: var(--color-secundario);
+}
