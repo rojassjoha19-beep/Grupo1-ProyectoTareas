@@ -26,11 +26,12 @@ export const httpClient = async (endpoint, options = {}) => {
 
     // Intentar convertir el texto a JSON
     const data = JSON.parse(rawText);
-
+  
     if (!response.ok) {
-      throw new Error(data.message ||`Error ${response.status}`);
+      throw new Error(
+          data.message || `Error ${response.status}: ${response.statusText}`
+      );
     }
-
     
     return data;
   } catch (error) {
