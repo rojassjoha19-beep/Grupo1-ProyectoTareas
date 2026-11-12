@@ -73,29 +73,9 @@ export const createTareaTemplate = () => {
                                     name="expired_at"
                                 >
                             </div>
-
-                            <div class="mb-3">
-                                <label
-                                    for="estadoTarea"
-                                    class="form-label fw-semibold"
-                                >
-                                    Estado
-                                </label>
-
-                                <select
-                                    class="form-select"
-                                    id="estadoTarea"
-                                    name="id_estado"
-                                    required
-                                >
-                                    <option value="">
-                                        Seleccione un estado
-                                    </option>
-                                </select>
-                            </div>
-
                         </div>
-
+        <!-- Se quitó el selector de estado: el backend asigna el estado inicial -->
+        
                         <div class="modal-footer">
                             <button
                                 type="button"
