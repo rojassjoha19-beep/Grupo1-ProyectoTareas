@@ -242,7 +242,7 @@ class EquipoController extends BaseController
          */
         public function destroy($id = null)
         {
-            usuario_id=$this->requireSesion();
+            $usuario_id = $this->requireSesion();
             
             if( !$this->usuarioModel->tienePermiso($usuario_id, 'equipos.eliminar')) {
                 $this->jsonResponse([
@@ -276,7 +276,7 @@ class EquipoController extends BaseController
             if($total_tareas > 0 && !$confirmar) {
                 $this->jsonResponse([
                     'ok' => false,
-                    'mensaje' => 'El equipo tiene tareas asignadas. Por favor, confirme la eliminación.'
+                    'mensaje' => 'El equipo tiene tareas asignadas. Por favor, confirme la eliminación.',
                     'tareas' => $total_tareas
                 ], 409);
             }       
@@ -292,7 +292,7 @@ class EquipoController extends BaseController
                 'ok' => true,
                 'mensaje' => 'Equipo eliminado exitosamente.'
 
-            ])
+            ]);
         }
 }
 

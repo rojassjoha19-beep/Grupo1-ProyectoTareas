@@ -103,13 +103,14 @@ class TareaController extends BaseController
             ], 401);
         }
 
-          if (empty($data['titulo'])) {
+          if (empty($datos['titulo'])) {
             $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => 'La fecha'
+                'mensaje' => 'El título es obligatorio.'
             ], 400);
         }
-         $errorFecha = $this->tareaModel->validarFecha($data['expired_at']);
+
+         $errorFecha = $this->tareaModel->validarFecha($datos['expired_at']);
 
         if ($errorFecha) {
             $this->jsonResponse([
@@ -118,8 +119,6 @@ class TareaController extends BaseController
             ], 400);
         }
         
-
-
         $data = [
             'titulo' => trim($datos['titulo'] ?? ''),
             'descripcion' => trim($datos['descripcion'] ?? ''),
@@ -128,14 +127,7 @@ class TareaController extends BaseController
             'id_usuario' => $_SESSION['user_id']
         ];
 
-        if (empty($data['titulo'])) {
-            $this->jsonResponse([
-                'ok' => false,
-                'mensaje' => 'El título es obligatorio.'
-            ], 400);
-        }
-
-        $creado = $this->tareaModel->altaTarea($data);
+        $creado = $this->tareaModel->altaTarea($datos);
 
         if ($creado) {
             $id_tarea = $this->tareaModel->ultimoId();
