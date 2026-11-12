@@ -5,11 +5,13 @@ class TareaController extends BaseController
 {
     private $tareaModel;
     private $estadoModel;
+    private $equipoMiembroModel;
 
     public function __construct()
     {
         $this->tareaModel = $this->model('TareaModel');
         $this->estadoModel = $this->model('EstadoModel');
+        $this->equipoMiembroModel = $this->model('EquipoMiembroModel');
     }
 
     /**
@@ -110,7 +112,7 @@ class TareaController extends BaseController
             ], 400);
         }
 
-         $errorFecha = $this->tareaModel->validarFecha($datos['expired_at']);
+         $errorFecha = $this->tareaModel->validarFecha($datos['expired_at']??null);
 
         if ($errorFecha) {
             $this->jsonResponse([
@@ -124,10 +126,46 @@ class TareaController extends BaseController
             'descripcion' => trim($datos['descripcion'] ?? ''),
             'expired_at' => $datos['expired_at'] ?? null,
             'id_estado' => $datos['id_estado'] ?? 1,
-            'id_usuario' => $_SESSION['user_id']
+            //agrego $datos['id_usuario'] ??  para asignar miembro de equipo
+            'id_usuario' => $datos['id_usuario'] ?? $_SESSION['user_id']
         ];
+        $asignado = $data['id_usuario'] ;
+        $equipo   = (int) $data['id_equipo'];
+        //Asignar tarea a un miembro del equipo, verifico que el usuario sea miembro del equipo
 
-        $creado = $this->tareaModel->altaTarea($datos);
+        if ($asignado !== (int) $_SESSION['user_id']) {
+
+            if (empty($equipo)) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'Falta indicar el equipo.'
+                ], 400);
+            }
+
+            // Solo el líder del equipo puede asignar a otros
+            if (!$this->equipoMiembroModel->esLiderDeEquipo($equipo, $_SESSION['user_id'])) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'Solo el líder del equipo puede asignar tareas a otros.'
+                ], 403);
+            }
+
+            if (!$this->equipoMiembroModel->usuarioActivoExiste($asignado)) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'El usuario asignado no existe.'
+                ], 400);
+            }
+
+            if (!$this->equipoMiembroModel->esMiembro($equipo, $asignado)) {
+                $this->jsonResponse([
+                    'ok' => false,
+                    'mensaje' => 'El usuario asignado no pertenece al equipo.'
+                ], 400);
+            }
+        }
+
+        $creado = $this->tareaModel->altaTarea($data);
 
         if ($creado) {
             $id_tarea = $this->tareaModel->ultimoId();

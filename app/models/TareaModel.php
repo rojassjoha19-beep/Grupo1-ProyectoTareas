@@ -94,6 +94,7 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
                     expired_at,
                     fk_id_estado,
                     fk_id_usuario,
+                    equipo_id,
                     created_at
                 )
              VALUES
@@ -103,6 +104,7 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
                     :expired_at,
                     :id_estado,
                     :id_usuario,
+                    :id_equipo,
                     CURRENT_TIMESTAMP
                 )"
         );
@@ -130,6 +132,11 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
         $this->db->bind(
             'id_usuario',
             $data['id_usuario']
+        );
+
+        $this->db->bind(
+            'id_equipo',
+            $data['id_equipo']
         );
 
         return $this->db->execute();
@@ -253,7 +260,7 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
 public function validarFecha($fecha)
 {
     if (empty($fecha)) {
-        return null; 
+        return 'La fecha de vencimiento es obligatoria.'; 
     }
 
     $fechaVenc = DateTimeImmutable::createFromFormat('Y-m-d', $fecha);
