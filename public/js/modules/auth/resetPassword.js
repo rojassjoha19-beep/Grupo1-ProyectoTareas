@@ -1,4 +1,4 @@
-import { resetPasswordTemplate } from "../../templates/authTemplates.js";
+import { resetPasswordTemplate } from "../../templates/auth/authTemplates.js";
 import { authService } from "../../services/authService.js";
 
 export const renderResetPassword = (container) => {

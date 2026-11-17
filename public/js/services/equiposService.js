@@ -22,4 +22,10 @@ export const equiposService = {
       body: JSON.stringify({ usuario_id: Number(idUsuario) }),
     });
   },
+    // Lista los equipos a los que pertenece el usuario logueado
+  listarEquipos: async () => {
+    return await httpClient("/api/equipos");
+  },
+
+  
 };
