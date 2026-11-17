@@ -114,5 +114,15 @@ class UsuarioController extends BaseController
             'mensaje' => 'Rol actualizado correctamente.'
         ]);
     }
+    public function indexAdmin()
+{
+    $this->requirePermiso('usuarios.editar');
+
+    $this->jsonResponse([
+        'ok'       => true,
+        'usuarios' => $this->usuarioModel->listarParaAdmin(),
+        'equipos'  => $this->usuarioModel->listarEquipos()
+    ]);
+}
 
 }

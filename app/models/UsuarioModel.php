@@ -96,5 +96,66 @@ class UsuarioModel
 
         return $this->db->execute();
     }
+    public function listarParaAdmin()
+{
+    $this->db->query(
+        "SELECT
+            usuario.id,
+            usuario.nombre,
+            usuario.apellido,
+            usuario.email,
+            usuario.avatar,
+            usuario.rol_id,
+            rol.nombre AS rol,
+            (SELECT COUNT(*)
+               FROM equipo_usuario
+              WHERE equipo_usuario.usuario_id = usuario.id) AS total_equipos,
+            (SELECT GROUP_CONCAT(equipo_usuario.equipo_id)
+               FROM equipo_usuario
+              WHERE equipo_usuario.usuario_id = usuario.id) AS equipos_ids,
+            (SELECT COUNT(*)
+               FROM tarea
+              WHERE tarea.fk_id_usuario = usuario.id
+                AND tarea.deleted_at IS NULL
+                AND tarea.fk_id_estado <> 3) AS tareas_activas
+         FROM usuario
+         INNER JOIN rol ON rol.id = usuario.rol_id
+         WHERE usuario.deleted_at IS NULL
+         ORDER BY usuario.nombre"
+    );
+
+    return $this->db->registers();
+}
+
+public function listarEquipos()
+{
+    $this->db->query("SELECT id, nombre FROM equipo ORDER BY nombre");
+
+    return $this->db->registers();
+}
+
+public function esLiderDeAlgunEquipo($usuario_id)
+{
+    $this->db->query("SELECT id FROM equipo WHERE lider_id = :id LIMIT 1");
+    $this->db->bind('id', (int)$usuario_id);
+
+    return (bool)$this->db->register();
+}
+public function listarUsuariosParaEquipo()
+{
+    $this->db->query(
+        "SELECT
+            usuario.id, usuario.nombre, usuario.apellido,
+            usuario.email, usuario.avatar, usuario.rol_id,
+            rol.nombre AS rol
+         FROM usuario
+         INNER JOIN rol ON rol.id = usuario.rol_id
+         WHERE usuario.deleted_at IS NULL
+           AND usuario.rol_id <> 1
+         ORDER BY usuario.nombre"
+    );
+
+    return $this->db->registers();
+}
 }
 
