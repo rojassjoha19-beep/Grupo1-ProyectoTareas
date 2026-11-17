@@ -13,6 +13,9 @@ require_once 'config/config.php';
 // 4. Cargando helpers
 require_once 'helpers/password_creator.php';
 
+require_once 'helpers/recordatorios.php';
+require_once 'models/RecordatorioModel.php';
+
 // 5. Autoload de clases core
 spl_autoload_register(function($className){
     require_once 'core/' . $className . '.php';

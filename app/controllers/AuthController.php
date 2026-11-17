@@ -40,8 +40,6 @@ class AuthController extends BaseController {
                     'permisos' => $permisos
                 ]
             ]);
-        
-        
     }
 
     public function login() {
@@ -71,7 +69,13 @@ class AuthController extends BaseController {
                 $_SESSION['user_avatar'] = $user->avatar ?? null;
                 // Guardamos el rol del usuario en la sesión
                 $_SESSION['user_rol_id'] = (int)$user->rol_id;
-
+  if ((int)$user->rol_id === 2) {
+    try {
+        enviarRecordatoriosLider((int)$user->id);
+    } catch (Throwable $e) {
+        error_log('Error en recordatorios: ' . $e->getMessage());
+    }
+  }
                 //buscar permisos del usuario por rol
                 $permisos = $this->authModel->permiso_por_rol((int)$user->rol_id);
 
