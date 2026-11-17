@@ -266,6 +266,31 @@ class EquipoModel
             return false;
         }
     }
+    public function todosLosEquipos()
+{
+    $this->db->query(
+        "SELECT
+            equipo.id,
+            equipo.nombre,
+            equipo.lider_id,
+            CONCAT(usuario.nombre, ' ', usuario.apellido) AS lider_nombre,
+            0 AS es_lider,
+            (SELECT COUNT(*) FROM equipo_usuario
+              WHERE equipo_usuario.equipo_id = equipo.id) AS integrantes,
+            (SELECT COUNT(*) FROM tarea
+              WHERE tarea.equipo_id = equipo.id
+                AND tarea.deleted_at IS NULL) AS tareas,
+            (SELECT COUNT(*) FROM tarea
+              WHERE tarea.equipo_id = equipo.id
+                AND tarea.deleted_at IS NULL
+                AND tarea.fk_id_estado = 3) AS tareas_finalizadas
+         FROM equipo
+         INNER JOIN usuario ON usuario.id = equipo.lider_id
+         ORDER BY equipo.nombre"
+    );
+
+    return $this->db->registers();
+}
 
 
 }
