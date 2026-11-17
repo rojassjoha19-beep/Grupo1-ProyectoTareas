@@ -35,19 +35,24 @@ class UsuarioController extends BaseController
     /**
      * GET /api/usuarios
      */
+    /**
+ * GET /api/usuarios
+ */
     public function index()
     {
         $this->requirePermiso('usuarios.ver');
-            //excluyo admin para mostrar solo miembros 
-          if (($_GET['para'] ?? '') === 'equipo') {
-        $usuarios = $this->usuarioModel->listarUsuariosParaEquipo();
-         } else {
-        $usuarios = $this->usuarioModel->listarUsuarios();
-         }
+
+        // Excluir administradores cuando se listan
+        // usuarios para asignar a un equipo
+        if (($_GET['para'] ?? '') === 'equipo') {
+            $usuarios = $this->usuarioModel->listarUsuariosParaEquipo();
+        } else {
+            $usuarios = $this->usuarioModel->listarUsuarios();
+        }
 
         $this->jsonResponse([
             'ok' => true,
-            'usuarios' => $this-> $usuarios
+            'usuarios' => $usuarios
         ]);
     }
 

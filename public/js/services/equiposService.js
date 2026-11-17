@@ -27,5 +27,15 @@ export const equiposService = {
     return await httpClient("/api/equipos");
   },
 
+  // Cambiar rol de usuario
+cambiarRol: async (idUsuario, rolId) => {
+    return await httpClient(`/api/usuarios/${idUsuario}/rol`, {
+        method: "PUT",
+        body: JSON.stringify({
+            rol_id: rolId
+        })
+    });
+},
+
   
 };
