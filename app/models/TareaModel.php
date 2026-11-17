@@ -276,4 +276,55 @@ public function validarFecha($fecha)
 
     return null;
 }
+    /**
+     * Qué relación tiene el usuario con la tarea.
+     * Devuelve false si la tarea no existe o está borrada.
+     * es_admin: rol Administrador (id 1) | es_lider: lidera el equipo de la tarea
+     * es_asignado: la tarea es suya
+     */
+    public function accesoATarea($id_tarea, $usuario_id)
+    {
+        $this->db->query(
+            "SELECT
+                tarea.id,
+                (usuario.rol_id = 1) AS es_admin,
+                (equipo.lider_id = :id_lider) AS es_lider,
+                (tarea.fk_id_usuario = :id_asignado) AS es_asignado
+             FROM tarea
+             INNER JOIN usuario ON usuario.id = :id_usuario
+             LEFT JOIN equipo ON equipo.id = tarea.equipo_id
+             WHERE tarea.id = :id_tarea
+               AND tarea.deleted_at IS NULL"
+        );
+        $this->db->bind('id_lider', (int)$usuario_id);
+        $this->db->bind('id_asignado', (int)$usuario_id);
+        $this->db->bind('id_usuario', (int)$usuario_id);
+        $this->db->bind('id_tarea', (int)$id_tarea);
+
+        return $this->db->register();
+    }
+
+    public function estadoExiste($id_estado)
+    {
+        $this->db->query("SELECT id_estado FROM estado WHERE id_estado = :id");
+        $this->db->bind('id', (int)$id_estado);
+
+        return (bool) $this->db->register();
+    }
+
+    /**
+     * Cambia solo el estado (lo que puede hacer un miembro).
+     */
+    public function updateEstado($id_tarea, $id_estado)
+    {
+        $this->db->query(
+            "UPDATE tarea
+             SET fk_id_estado = :id_estado, updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id_tarea AND deleted_at IS NULL"
+        );
+        $this->db->bind('id_estado', (int)$id_estado);
+        $this->db->bind('id_tarea', (int)$id_tarea);
+
+        return $this->db->execute();
+    }
 }

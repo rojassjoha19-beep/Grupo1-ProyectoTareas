@@ -3,10 +3,11 @@
 class EquipoMiembroController extends BaseController
 {
     private $miembroModel;
-
+    private $permisoModel;
     public function __construct()
     {
         $this->miembroModel = $this->model('EquipoMiembroModel');
+        $this->permisoModel = $this->model('PermisoModel');
     }
 
     /**
@@ -17,6 +18,14 @@ class EquipoMiembroController extends BaseController
     public function agregar($equipo_id = null)
     {
         $miId = $this->requireSesion();
+        
+        if (!$this->permisoModel->tienePermiso($miId, 'equipos.miembros')) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No tenés permiso para gestionar miembros.'
+            ], 403);
+        }
+
         $equipo_id = $this->idValido($equipo_id, 'Id de equipo inválido.');
 
         if (!$this->miembroModel->esLiderDeEquipo($equipo_id, $miId)) {
@@ -60,6 +69,14 @@ class EquipoMiembroController extends BaseController
     public function quitar($equipo_id = null, $usuario_id = null)
     {
         $miId = $this->requireSesion();
+
+        if (!$this->permisoModel->tienePermiso($miId, 'equipos.miembros')) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No tenés permiso para gestionar miembros.'
+            ], 403);
+        }
+
         $equipo_id = $this->idValido($equipo_id, 'Id de equipo inválido.');
         $usuario_id = $this->idValido($usuario_id, 'Id de usuario inválido.');
 
@@ -108,6 +125,7 @@ class EquipoMiembroController extends BaseController
 
         return (int) $_SESSION['user_id'];
     }
+
 
     /**
      * Valida que el valor sea un entero positivo, o responde 400.

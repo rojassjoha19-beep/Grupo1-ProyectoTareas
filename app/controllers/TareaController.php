@@ -1,4 +1,3 @@
-
 <?php
 
 class TareaController extends BaseController
@@ -6,26 +5,77 @@ class TareaController extends BaseController
     private $tareaModel;
     private $estadoModel;
     private $equipoMiembroModel;
+    private $permisoModel;
 
     public function __construct()
     {
         $this->tareaModel = $this->model('TareaModel');
         $this->estadoModel = $this->model('EstadoModel');
         $this->equipoMiembroModel = $this->model('EquipoMiembroModel');
+        $this->permisoModel = $this->model('PermisoModel');
+    }
+
+    /** Devuelve el id del usuario logueado, o responde 401. */
+    private function requireSesion()
+    {
+        if (empty($_SESSION['user_id'])) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'Usuario no autenticado.'
+            ], 401);
+        }
+
+        return (int) $_SESSION['user_id'];
+    }
+
+    /** Valida un entero positivo, o responde 400. */
+    private function idValido($valor, $mensaje)
+    {
+        $id = filter_var($valor, FILTER_VALIDATE_INT);
+
+        if ($id === false || $id < 1) {
+            $this->jsonResponse(['ok' => false, 'mensaje' => $mensaje], 400);
+        }
+
+        return $id;
+    }
+
+    /** Responde 403 si el rol del usuario no tiene el permiso. */
+    private function exigirPermiso($usuario_id, $permiso)
+    {
+        if (!$this->permisoModel->tienePermiso($usuario_id, $permiso)) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No tenés permiso para realizar esta acción.'
+            ], 403);
+        }
+    }
+
+    /** Carga la relación usuario-tarea, o responde 404 si la tarea no existe. */
+    private function cargarAcceso($id_tarea, $usuario_id)
+    {
+        $acceso = $this->tareaModel->accesoATarea($id_tarea, $usuario_id);
+
+        if (!$acceso) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'La tarea no existe.'
+            ], 404);
+        }
+
+        return $acceso;
     }
 
     /**
      * GET /api/tareas
      * GET /api/tareas/estado/{id_estado}
-     *
-     * Obtiene el listado de tareas del usuario autenticado.
-     * Si id_estado = 0, obtiene todas.
      */
     public function index($id_estado = 0)
     {
+        $this->requireSesion();
+
         $fecha_vencimiento = trim($_GET['fecha_vencimiento'] ?? '');
 
-        // Validar el formato YYYY-MM-DD recibido desde el selector de fecha.
         if ($fecha_vencimiento !== '') {
             $fecha = DateTimeImmutable::createFromFormat('!Y-m-d', $fecha_vencimiento);
             $erroresFecha = DateTimeImmutable::getLastErrors();
@@ -54,8 +104,6 @@ class TareaController extends BaseController
 
     /**
      * GET /api/estados
-     *
-     * Obtiene la lista de estados disponibles.
      */
     public function estados()
     {
@@ -69,81 +117,73 @@ class TareaController extends BaseController
 
     /**
      * GET /api/tareas/{id_tarea}
-     *
-     * Obtiene el detalle de una tarea.
+     * Pueden verla: el administrador, el líder del equipo y la persona asignada.
      */
     public function show($id_tarea = null)
     {
-        if (!$id_tarea) {
+        $usuario_id = $this->requireSesion();
+        $id_tarea = $this->idValido($id_tarea, 'ID de tarea no válido.');
+
+        $acceso = $this->cargarAcceso($id_tarea, $usuario_id);
+
+        if (!($acceso->es_admin || $acceso->es_lider || $acceso->es_asignado)) {
             $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => 'ID de tarea no proporcionado.'
-            ], 400);
+                'mensaje' => 'No tenés acceso a esta tarea.'
+            ], 403);
         }
 
-        $tarea = $this->tareaModel->tareaById($id_tarea);
+        $this->exigirPermiso($usuario_id, 'tareas.ver');
 
         $this->jsonResponse([
             'ok' => true,
-            'tarea' => $tarea
+            'tarea' => $this->tareaModel->tareaById($id_tarea)
         ]);
     }
 
     /**
      * POST /api/tareas
-     *
-     * Crea una nueva tarea para el usuario autenticado.
+     * Sin id_usuario: tarea propia. Con id_usuario: la asigna el líder del equipo.
      */
     public function store()
     {
+        $usuario_id = $this->requireSesion();
         $datos = $this->getJsonBody();
 
-        if (empty($_SESSION['user_id'])) {
-            $this->jsonResponse([
-                'ok' => false,
-                'mensaje' => 'Usuario no autenticado.'
-            ], 401);
-        }
-
-          if (empty($datos['titulo'])) {
+        $titulo = trim($datos['titulo'] ?? '');
+        if ($titulo === '') {
             $this->jsonResponse([
                 'ok' => false,
                 'mensaje' => 'El título es obligatorio.'
             ], 400);
         }
 
-         $errorFecha = $this->tareaModel->validarFecha($datos['expired_at']??null);
-
+        $errorFecha = $this->tareaModel->validarFecha($datos['expired_at'] ?? null);
         if ($errorFecha) {
+            $this->jsonResponse(['ok' => false, 'mensaje' => $errorFecha], 400);
+        }
+
+        $id_estado = (int) ($datos['id_estado'] ?? 1);
+        if (!$this->tareaModel->estadoExiste($id_estado)) {
             $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => $errorFecha
+                'mensaje' => 'El estado indicado no existe.'
             ], 400);
         }
-        
-        $data = [
-            'titulo' => trim($datos['titulo'] ?? ''),
-            'descripcion' => trim($datos['descripcion'] ?? ''),
-            'expired_at' => $datos['expired_at'] ?? null,
-            'id_estado' => $datos['id_estado'] ?? 1,
-            //agrego $datos['id_usuario'] ??  para asignar miembro de equipo
-            'id_usuario' => $datos['id_usuario'] ?? $_SESSION['user_id']
-        ];
-        $asignado = $data['id_usuario'] ;
-        $equipo   = (int) $data['id_equipo'];
-        //Asignar tarea a un miembro del equipo, verifico que el usuario sea miembro del equipo
 
-        if ($asignado !== (int) $_SESSION['user_id']) {
+        $asignado = (int) ($datos['id_usuario'] ?? $usuario_id);
+        $equipo = !empty($datos['id_equipo']) ? (int) $datos['id_equipo'] : null;
 
-            if (empty($equipo)) {
+        if ($asignado !== $usuario_id) {
+            // Asignar a otra persona: solo el líder del equipo, y a un miembro de ese equipo
+            if (!$equipo) {
                 $this->jsonResponse([
                     'ok' => false,
                     'mensaje' => 'Falta indicar el equipo.'
                 ], 400);
             }
 
-            // Solo el líder del equipo puede asignar a otros
-            if (!$this->equipoMiembroModel->esLiderDeEquipo($equipo, $_SESSION['user_id'])) {
+            if (!$this->equipoMiembroModel->esLiderDeEquipo($equipo, $usuario_id)) {
                 $this->jsonResponse([
                     'ok' => false,
                     'mensaje' => 'Solo el líder del equipo puede asignar tareas a otros.'
@@ -163,17 +203,30 @@ class TareaController extends BaseController
                     'mensaje' => 'El usuario asignado no pertenece al equipo.'
                 ], 400);
             }
+        } elseif ($equipo && !$this->equipoMiembroModel->esMiembro($equipo, $usuario_id)) {
+            // Tarea propia con equipo: tiene que ser un equipo al que pertenece
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No pertenecés a ese equipo.'
+            ], 403);
         }
+
+        $data = [
+            'titulo' => $titulo,
+            'descripcion' => trim($datos['descripcion'] ?? ''),
+            'expired_at' => $datos['expired_at'] ?? null,
+            'id_estado' => $id_estado,
+            'id_usuario' => $asignado,
+            'id_equipo' => $equipo
+        ];
 
         $creado = $this->tareaModel->altaTarea($data);
 
         if ($creado) {
-            $id_tarea = $this->tareaModel->ultimoId();
-
             $this->jsonResponse([
                 'ok' => true,
                 'mensaje' => 'Tarea creada exitosamente.',
-                'id_tarea' => $id_tarea
+                'id_tarea' => $this->tareaModel->ultimoId()
             ], 201);
         }
 
@@ -185,83 +238,93 @@ class TareaController extends BaseController
 
     /**
      * PATCH /api/tareas/{id_tarea}
-     *
-     * Actualiza una tarea existente.
+     * Administrador y líder del equipo: editan todo.
+     * Persona asignada (miembro): solo puede cambiar el estado.
      */
     public function update($id_tarea = null)
     {
-    if (!$id_tarea) {
-        $this->jsonResponse([
-            'ok' => false,
-            'mensaje' => 'ID de tarea no válido.'
-        ], 400);
-    }
+        $usuario_id = $this->requireSesion();
+        $id_tarea = $this->idValido($id_tarea, 'ID de tarea no válido.');
 
-    $datos = $this->getJsonBody();
+        $acceso = $this->cargarAcceso($id_tarea, $usuario_id);
+        $actual = $this->tareaModel->tareaById($id_tarea);
+        $datos = $this->getJsonBody();
 
-    $data = [
-        'titulo' => trim($datos['titulo'] ?? ''),
-        'descripcion' => trim($datos['descripcion'] ?? ''),
-        'expired_at' => $datos['expired_at'] ?? null,
-        'id_estado' => $datos['id_estado'] ?? 1,
-        'id_tarea' => $id_tarea
-    ];
-
-    if (empty($data['titulo'])) {
-        $this->jsonResponse([
-            'ok' => false,
-            'mensaje' => 'El título es obligatorio.'
-        ], 400);
-    }
-
-            $errorFecha = $this->tareaModel->validarFecha($data['expired_at']);
-
-
-        if ($errorFecha) {
+        $id_estado = (int) ($datos['id_estado'] ?? $actual->fk_id_estado);
+        if (!$this->tareaModel->estadoExiste($id_estado)) {
             $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => $errorFecha
+                'mensaje' => 'El estado indicado no existe.'
             ], 400);
         }
-           $actual = $this->tareaModel->tareaById($data['id_tarea']);
 
-        if (substr($actual->expired_at, 0, 10) !== $data['expired_at']) {
-            $errorFecha = $this->tareaModel->validarFecha($data['expired_at']);
+        if ($acceso->es_admin || $acceso->es_lider) {
+            $this->exigirPermiso($usuario_id, 'tareas.editar');
 
-            if ($errorFecha) {
+            $titulo = trim($datos['titulo'] ?? '');
+            if ($titulo === '') {
                 $this->jsonResponse([
                     'ok' => false,
-                    'mensaje' => $errorFecha
+                    'mensaje' => 'El título es obligatorio.'
                 ], 400);
             }
+
+            $fechaActual = substr($actual->expired_at, 0, 10);
+            $expired_at = $datos['expired_at'] ?? $fechaActual;
+
+            // Solo se valida la fecha si cambió (una tarea vencida se puede seguir editando)
+            if ($expired_at !== $fechaActual) {
+                $errorFecha = $this->tareaModel->validarFecha($expired_at);
+                if ($errorFecha) {
+                    $this->jsonResponse(['ok' => false, 'mensaje' => $errorFecha], 400);
+                }
+            }
+
+            $actualizado = $this->tareaModel->updateTarea([
+                'titulo' => $titulo,
+                'descripcion' => trim($datos['descripcion'] ?? ''),
+                'expired_at' => $expired_at,
+                'id_estado' => $id_estado,
+                'id_tarea' => $id_tarea
+            ]);
+        } elseif ($acceso->es_asignado) {
+            $this->exigirPermiso($usuario_id, 'tareas.estado');
+
+            $actualizado = $this->tareaModel->updateEstado($id_tarea, $id_estado);
+        } else {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No tenés acceso a esta tarea.'
+            ], 403);
         }
 
-    $actualizado =
-        $this->tareaModel->updateTarea($data);
-
-    $this->jsonResponse([
-        'ok' => (bool) $actualizado,
-        'mensaje' => $actualizado
-            ? 'Tarea actualizada correctamente.'
-            : 'Sin cambios realizados.'
-    ]);
-}
-
-
+        $this->jsonResponse([
+            'ok' => (bool) $actualizado,
+            'mensaje' => $actualizado
+                ? 'Tarea actualizada correctamente.'
+                : 'Sin cambios realizados.'
+        ]);
+    }
 
     /**
      * DELETE /api/tareas/{id_tarea}
-     *
-     * Elimina una tarea mediante soft-delete.
+     * Solo el administrador y el líder del equipo.
      */
     public function destroy($id_tarea = null)
     {
-        if (!$id_tarea) {
+        $usuario_id = $this->requireSesion();
+        $id_tarea = $this->idValido($id_tarea, 'ID de tarea no provisto.');
+
+        $acceso = $this->cargarAcceso($id_tarea, $usuario_id);
+
+        if (!($acceso->es_admin || $acceso->es_lider)) {
             $this->jsonResponse([
                 'ok' => false,
-                'mensaje' => 'ID de tarea no provisto.'
-            ], 400);
+                'mensaje' => 'No tenés acceso a esta tarea.'
+            ], 403);
         }
+
+        $this->exigirPermiso($usuario_id, 'tareas.eliminar');
 
         $eliminado = $this->tareaModel->eliminarTarea($id_tarea);
 
@@ -273,4 +336,3 @@ class TareaController extends BaseController
         ]);
     }
 }
-
