@@ -18,7 +18,7 @@ export const adminDashboardTemplate = () => `
             </div>
 
             <a
-                href="/Grupo1-ProyectoTareas/admin/usuarios"
+                href="/Grupo1-ProyectoTareas/dashboard/admin/usuarios"
                 data-link
                 class="btn btn-main"
             >
