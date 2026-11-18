@@ -43,5 +43,12 @@ export const tareaService = {
             method: "DELETE",
         });
     },
+    async getMisEquipos() {
+        return await httpClient("/api/misequipos");
+    },
+
+    async getMiembrosEquipo(equipoId) {
+        return await httpClient(`/api/equipos/${equipoId}/miembros`);
+    },
 };
 

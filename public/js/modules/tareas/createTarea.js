@@ -80,10 +80,57 @@ export const initCreateTarea = () => {
                 bootstrap.Modal.getOrCreateInstance(modalEl);
 
             modalInstance.show();
+            // Si el usuario lidera equipos, se muestra el bloque de asignación
+            const grupoAsignar = document.getElementById("grupoAsignar");
+            const selectEquipo = document.getElementById("id_equipo");
 
+            try {
+                const respEquipos = await tareaService.getMisEquipos();
+
+                if (respEquipos.ok && respEquipos.equipos.length > 0) {
+                    selectEquipo.innerHTML =
+                        `<option value="">Sin equipo (para mí)</option>` +
+                        respEquipos.equipos
+                            .map((e) => `<option value="${e.id}">${e.nombre}</option>`)
+                            .join("");
+
+                    grupoAsignar.classList.remove("d-none");
+                }
+            } catch (error) {
+                console.error("Error al cargar los equipos:", error);
+            }
 
             // Campo de fecha: cuando la persona lo cambia, se saca el cartel de error
             const inputFecha = formTarea.querySelector('input[type="date"]');
+                        // PASO B: al elegir un equipo, se cargan sus miembros
+            const selectUsuario = document.getElementById("id_usuario");
+
+            selectEquipo?.addEventListener("change", async () => {
+                const equipoId = selectEquipo.value;
+
+                // Sin equipo: la tarea es para uno mismo
+                if (!equipoId) {
+                    selectUsuario.innerHTML =
+                        `<option value="">Seleccioná un equipo primero</option>`;
+                    selectUsuario.disabled = true;
+                    return;
+                }
+
+                try {
+                    const respMiembros = await tareaService.getMiembrosEquipo(equipoId);
+
+                    if (respMiembros.ok) {
+                        selectUsuario.innerHTML =
+                            `<option value="">Para mí</option>` +
+                            respMiembros.miembros
+                                .map((m) => `<option value="${m.id}">${m.nombre} ${m.apellido}</option>`)
+                                .join("");
+                        selectUsuario.disabled = false;
+                    }
+                } catch (error) {
+                    console.error("Error al cargar los miembros:", error);
+                }
+            });
             inputFecha?.addEventListener("input", () => inputFecha.classList.remove("is-invalid"));
 
             formTarea.addEventListener("submit", async (e) => {
@@ -94,6 +141,9 @@ export const initCreateTarea = () => {
 
                 const formData = new FormData(formTarea);
                 const data = Object.fromEntries(formData.entries());
+                            
+                if (!data.id_usuario) delete data.id_usuario;
+                if (!data.id_equipo) delete data.id_equipo;
 
                 try {
                     await tareaService.create(data);
