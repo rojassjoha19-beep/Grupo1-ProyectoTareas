@@ -266,7 +266,7 @@ class EquipoModel
             return false;
         }
     }
-    public function todosLosEquipos()
+  public function todosLosEquipos()
 {
     $this->db->query(
         "SELECT
@@ -283,7 +283,11 @@ class EquipoModel
             (SELECT COUNT(*) FROM tarea
               WHERE tarea.equipo_id = equipo.id
                 AND tarea.deleted_at IS NULL
-                AND tarea.fk_id_estado = 3) AS tareas_finalizadas
+                AND tarea.fk_id_estado = 3) AS tareas_finalizadas,
+            (SELECT COUNT(*) FROM tarea
+              WHERE tarea.equipo_id = equipo.id
+                AND tarea.deleted_at IS NULL
+                AND tarea.fk_id_estado = 4) AS tareas_vencidas
          FROM equipo
          INNER JOIN usuario ON usuario.id = equipo.lider_id
          ORDER BY equipo.nombre"
@@ -292,5 +296,6 @@ class EquipoModel
     return $this->db->registers();
 }
 
-
 }
+
+
