@@ -3,18 +3,24 @@
 import { httpClient } from "../utils/httpClient.js";
 
 export const equiposService = {
-    // Lista de usuarios para elegir como integrantes
+  // Lista de usuarios para elegir como integrantes
   listarUsuarios: async () => {
     return await httpClient("/api/usuarios");
   },
 
-    // Crea el equipo. Devuelve el id del equipo nuevo.
+  // Usuarios con equipos y tareas activas (panel de admin)
+  listarUsuariosAdmin: async () => {
+    return await httpClient("/api/admin/usuarios");
+  },
+
+  // Crea el equipo. Devuelve el id del equipo nuevo.
   crearEquipo: async (datos) => {
     return await httpClient("/api/equipos", {
       method: "POST",
       body: JSON.stringify(datos),
     });
   },
+
   // Agrega un integrante a un equipo que ya existe (solo puede el líder)
   agregarMiembro: async (idEquipo, idUsuario) => {
     return await httpClient(`/api/equipos/${idEquipo}/miembros`, {
@@ -22,20 +28,17 @@ export const equiposService = {
       body: JSON.stringify({ usuario_id: Number(idUsuario) }),
     });
   },
-    // Lista los equipos a los que pertenece el usuario logueado
+
+  // Lista los equipos (el admin ve todos, el resto solo los suyos)
   listarEquipos: async () => {
     return await httpClient("/api/equipos");
   },
 
   // Cambiar rol de usuario
-cambiarRol: async (idUsuario, rolId) => {
+  cambiarRol: async (idUsuario, rolId) => {
     return await httpClient(`/api/usuarios/${idUsuario}/rol`, {
-        method: "PUT",
-        body: JSON.stringify({
-            rol_id: rolId
-        })
+      method: "PUT",
+      body: JSON.stringify({ rol_id: rolId }),
     });
-},
-
-  
+  },
 };
