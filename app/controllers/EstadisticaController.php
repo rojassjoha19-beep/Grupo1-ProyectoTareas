@@ -3,13 +3,17 @@
 class EstadisticaController extends BaseController
 {
     private $estadisticaModel;
+    private $usuarioModel;
+    private $permisoModel;
     private $miembroModel;
 
     public function __construct()
     {
         $this->estadisticaModel = $this->model('EstadisticaModel');
+        $this->permisoModel = $this->model('PermisoModel');
         $this->miembroModel = $this->model('EquipoMiembroModel');
-    }
+        $this->usuarioModel = $this->model('UsuarioModel');
+        }
 
     /**
      * GET /api/equipos/{id}/estadisticas
@@ -32,14 +36,24 @@ class EstadisticaController extends BaseController
             ], 400);
         }
 
-// Solo el líder de ese equipo puede ver sus estadísticas
-if (!$this->miembroModel->esLiderDeEquipo($equipo_id, (int)$_SESSION['user_id'])) {
-    $this->jsonResponse([
-        'ok' => false,
-        'mensaje' => 'Solo el líder del equipo puede ver las estadísticas.'
-    ], 403);
-}
+        // Permiso del rol
+        if (!$this->permisoModel->tienePermiso((int)$_SESSION['user_id'], 'estadisticas.ver')) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No tenés permiso para ver estadísticas.'
+            ], 403);
+        }
+            $usuario_id = (int)$_SESSION['user_id'];
+            $usuario    = $this->usuarioModel->buscarUsuario($usuario_id);
+             $esAdmin    = $usuario && (int)$usuario->rol_id === 1;
 
+        // Solo el admin o el líder de ese equipo pueden ver sus estadísticas
+        if (!$esAdmin && !$this->miembroModel->esLiderDeEquipo($equipo_id, $usuario_id)) {
+              $this->jsonResponse([
+          'ok' => false,
+         'mensaje' => 'Solo el administrador o el líder del equipo puede ver las estadísticas.'
+     ], 403);
+        }
         $filas = $this->estadisticaModel->tareasPorEstado($equipo_id);
 
         $total = 0;

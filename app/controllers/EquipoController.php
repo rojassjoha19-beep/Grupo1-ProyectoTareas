@@ -39,31 +39,32 @@ class EquipoController extends BaseController
      */
 
    
-    public function index() {
-        
-        $usuario_id = $this->requireSesion();
+   public function index()
+{
+    $usuario_id = $this->requireSesion();
 
-        if (!$this->usuarioModel->tienePermiso($usuario_id, 'equipos.ver')) {
-            $this->jsonResponse([
-                'ok' => false,
-                'mensaje' => 'No posee permisos necesarios'
-            ], 403);
-        }
-
-       
-        $usuario = $this->usuarioModel->buscarUsuario($usuario_id);
-
-        if ($usuario && (int)$usuario->rol_id === 1) {
-            $equipos = $this->equipoModel->todosLosEquipos();
-        } else {
-            $equipos = $this->equipoModel->equiposDelUsuario($usuario_id);
-        }
-
+    if (!$this->usuarioModel->tienePermiso($usuario_id, 'equipos.ver')) {
         $this->jsonResponse([
-            'ok' => true,
-            'equipos' => $equipos
-        ]);
+            'ok' => false,
+            'mensaje' => 'No posee permisos necesarios'
+        ], 403);
     }
+
+    $usuario = $this->usuarioModel->buscarUsuario($usuario_id);
+
+    // El administrador ve todos los equipos; el resto, solo los suyos
+    if ($usuario && (int)$usuario->rol_id === 1) {
+        $equipos = $this->equipoModel->todosLosEquipos();
+    } else {
+        $equipos = $this->equipoModel->equiposDelUsuario($usuario_id);
+    }
+
+    $this->jsonResponse([
+        'ok' => true,
+        'equipos' => $equipos
+    ]);
+}
+
     
 
 
@@ -102,12 +103,15 @@ class EquipoController extends BaseController
             ], 404);
         }
 
-        if (!$this->equipoModel->esMiembro($id, $usuario_id)){
-            $this->jsonResponse([
-            'ok' => false,
-            'mensaje' => 'No es miembro de este equipo.'
-            ],403);
-        }
+        $usuario = $this->usuarioModel->buscarUsuario($usuario_id);
+$esAdmin = ((int)$usuario->rol_id === 1);
+
+if (!$esAdmin && !$this->equipoModel->esMiembro($id, $usuario_id)) {
+    $this->jsonResponse([
+        'ok' => false,
+        'mensaje' => 'No es miembro de este equipo.'
+    ], 403);
+}
 
         
      $miembros = $this->equipoModel->obtenerMiembros($id);
@@ -258,7 +262,7 @@ class EquipoController extends BaseController
                 ], 403);
             }
 
-            if(!id || !ctype_digit((string)$id)) {
+          if (!$id || !ctype_digit((string)$id)) {      
                 $this->jsonResponse([
                     'ok' => false,
                     'mensaje' => 'ID de equipo no válido.'
@@ -277,7 +281,7 @@ class EquipoController extends BaseController
             }
             // Confirmacion con tareas 
 
-            $total_tareas = $this->equipoModel->contarTareas($id);
+          $total_tareas = $this->equipoModel->contarTareasDeEquipo($id);   // antes: contarTareas
             $confirmar = ($_GET['confirmar'] ?? '') === '1';
 
             if($total_tareas > 0 && !$confirmar) {
@@ -288,7 +292,7 @@ class EquipoController extends BaseController
                 ], 409);
             }       
 
-                if($this->equipoModel->eliminarEquipo($id, $total_tareas > 0)) {
+               if (!$this->equipoModel->eliminarEquipo($id, $total_tareas > 0)) {   // antes sin el !
                 $this->jsonResponse([
                     'ok' => false,
                     'mensaje' => 'No se pudo eliminar el equipo.'

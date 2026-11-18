@@ -41,11 +41,13 @@
                    
    $router->get('/api/usuarios', ['UsuarioController', 'index']);
 
-
    // Cambia el rol de un usuario. Solo puede hacerlo un usuario con rol Administrador.
    $router->put('/api/usuarios/{id}/rol', ['UsuarioController', 'cambiarRol']);
 
-
+   // Lista usuarios (con equipos y tareas activas) y equipos para el panel de admin.
+   // Requiere el permiso usuarios.editar (se valida en el controller).
+   $router->get('/api/admin/usuarios', ['UsuarioController', 'indexAdmin']);
+   
 
    // =========================================================================
    // RUTAS API REST - TAREAS Y ESTADOS
