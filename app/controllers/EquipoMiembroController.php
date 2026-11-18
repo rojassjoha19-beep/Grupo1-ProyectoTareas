@@ -4,10 +4,12 @@ class EquipoMiembroController extends BaseController
 {
     private $miembroModel;
     private $permisoModel;
+    private $equipoModel;
     public function __construct()
     {
         $this->miembroModel = $this->model('EquipoMiembroModel');
         $this->permisoModel = $this->model('PermisoModel');
+        $this->equipoModel = $this->model('EquipoModel');
     }
 
     /**
@@ -142,5 +144,47 @@ class EquipoMiembroController extends BaseController
         }
 
         return $id;
+    }
+
+        /**
+     * GET /api/misequipos
+     * Equipos que lidera el usuario logueado.
+     */
+    public function misEquipos()
+    {
+        $usuario_id = $this->requireSesion();
+
+        $equipos = $this->equipoModel->equiposDelUsuario($usuario_id);
+
+        $lidera = array_values(array_filter($equipos, function ($equipo) {
+            return (int) $equipo->es_lider === 1;
+        }));
+
+        $this->jsonResponse([
+            'ok' => true,
+            'equipos' => $lidera
+        ]);
+    }
+
+    /**
+     * GET /api/equipos/{id}/miembros
+     * Miembros de un equipo. Solo para su líder.
+     */
+    public function miembrosDeEquipo($equipo_id)
+    {
+        $usuario_id = $this->requireSesion();
+        $equipo_id = $this->idValido($equipo_id, 'Id de equipo inválido.');
+
+        if (!$this->equipoModel->esLiderDeEquipo($equipo_id, $usuario_id)) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No tenés permiso sobre este equipo.'
+            ], 403);
+        }
+
+        $this->jsonResponse([
+            'ok' => true,
+            'miembros' => $this->equipoModel->obtenerMiembros($equipo_id)
+        ]);
     }
 }

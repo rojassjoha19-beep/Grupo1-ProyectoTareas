@@ -20,6 +20,8 @@
    // Obtiene la lista de equipos donde pertenece el usuario
    $router->get('/api/equipos', ['EquipoController', 'index']);
    
+   // Equipos que lidera el usuario logueado (para el selector de asignar tareas)
+   $router->get('/api/misequipos', ['EquipoMiembroController', 'misEquipos']);
    // Obtiene los detalles de un equipo específico por ID
    $router->get('/api/equipos/{id}', ['EquipoController', 'show']);
 
@@ -83,7 +85,8 @@
 
    // Agregar un miembro a un equipo. Solo puede hacerlo el lider (se valida en el controller).
    $router->post('/api/equipos/{id}/miembros', ['EquipoMiembroController', 'agregar']);
-
+      // Listar los miembros de un equipo. Solo para su líder (se valida en el controller).
+   $router->get('/api/equipos/{id}/miembros', ['EquipoMiembroController', 'miembrosDeEquipo']);
    // Quitar un miembro de un equipo.
    $router->delete('/api/equipos/{id}/miembros/{usuarioId}', ['EquipoMiembroController', 'quitar']);
 

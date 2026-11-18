@@ -5,6 +5,7 @@ class TareaController extends BaseController
     private $tareaModel;
     private $estadoModel;
     private $equipoMiembroModel;
+    private $equipoModel;
     private $permisoModel;
      private $usuarioModel;
 
@@ -15,6 +16,7 @@ class TareaController extends BaseController
         $this->equipoMiembroModel = $this->model('EquipoMiembroModel');
         $this->permisoModel = $this->model('PermisoModel');
         $this->usuarioModel = $this->model('UsuarioModel');
+        $this->equipoModel = $this->model('EquipoModel');
     }
 
     /** Devuelve el id del usuario logueado, o responde 401. */

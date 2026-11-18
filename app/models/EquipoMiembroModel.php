@@ -83,5 +83,6 @@ class EquipoMiembroModel
         return $this->db->execute();
     }
 
+    
 
 }
