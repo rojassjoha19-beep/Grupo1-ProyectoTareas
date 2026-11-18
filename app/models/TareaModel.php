@@ -27,7 +27,7 @@ class TareaModel
      * Si $id_estado tiene un valor, filtra por estado.
      */
 
-public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
+public function buscarTareas($id_estado = 0, $fecha_vencimiento = null, $ver_todas = false)
 {
     $sql = "SELECT
                 tarea.id AS id_tarea,
@@ -36,12 +36,25 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
                 tarea.created_at,
                 tarea.expired_at,
                 estado.tipoEstado,
-                estado.color
+                estado.color,
+                CONCAT(usuario.nombre, ' ', usuario.apellido) AS asignado_nombre
             FROM tarea
             INNER JOIN estado
                 ON estado.id_estado = tarea.fk_id_estado
-            WHERE tarea.fk_id_usuario = :id_usuario
-              AND tarea.deleted_at IS NULL";
+            INNER JOIN usuario
+                ON usuario.id = tarea.fk_id_usuario
+            WHERE tarea.deleted_at IS NULL";
+
+
+    if (!$ver_todas) {
+        $sql .= " AND (
+                    tarea.fk_id_usuario = :id_usuario
+                    OR tarea.equipo_id IN (
+                        SELECT id FROM equipo WHERE lider_id = :id_lider
+                    )
+                  )";
+    }
+
 
     if ($id_estado > 0) {
         $sql .= " AND estado.id_estado = :id_estado";
@@ -56,10 +69,10 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null)
 
     $this->db->query($sql);
 
-    $this->db->bind(
-        'id_usuario',
-        $_SESSION['user_id']
-    );
+       if (!$ver_todas) {
+        $this->db->bind('id_usuario', $_SESSION['user_id']);
+        $this->db->bind('id_lider', $_SESSION['user_id']);
+    }
 
     if ($id_estado > 0) {
         $this->db->bind(

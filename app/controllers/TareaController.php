@@ -76,8 +76,9 @@ class TareaController extends BaseController
      */
     public function index($id_estado = 0)
     {
-        $this->requireSesion();
+        $usuario_id = $this->requireSesion();
 
+      
         $fecha_vencimiento = trim($_GET['fecha_vencimiento'] ?? '');
 
         if ($fecha_vencimiento !== '') {
@@ -98,8 +99,9 @@ class TareaController extends BaseController
             $fecha_vencimiento = null;
         }
 
-        $tareas = $this->tareaModel->buscarTareas($id_estado, $fecha_vencimiento);
-
+       
+        $ver_todas = $this->permisoModel->tienePermiso($usuario_id, 'usuarios.editar');
+        $tareas = $this->tareaModel->buscarTareas($id_estado, $fecha_vencimiento, $ver_todas);
         $this->jsonResponse([
             'ok' => true,
             'tareas' => $tareas
