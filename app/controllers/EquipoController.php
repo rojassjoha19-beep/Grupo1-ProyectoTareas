@@ -39,8 +39,8 @@ class EquipoController extends BaseController
      */
 
    
-   public function index() {
-
+   public function index()
+{
     $usuario_id = $this->requireSesion();
 
     if (!$this->usuarioModel->tienePermiso($usuario_id, 'equipos.ver')) {
@@ -53,15 +53,18 @@ class EquipoController extends BaseController
     $usuario = $this->usuarioModel->buscarUsuario($usuario_id);
 
     // El administrador ve todos los equipos; el resto, solo los suyos
-    $equipos = ((int)$usuario->rol_id === 1)
-        ? $this->equipoModel->todosLosEquipos()
-        : $this->equipoModel->equiposDelUsuario($usuario_id);
+    if ($usuario && (int)$usuario->rol_id === 1) {
+        $equipos = $this->equipoModel->todosLosEquipos();
+    } else {
+        $equipos = $this->equipoModel->equiposDelUsuario($usuario_id);
+    }
 
     $this->jsonResponse([
         'ok' => true,
         'equipos' => $equipos
     ]);
 }
+
     
 
 

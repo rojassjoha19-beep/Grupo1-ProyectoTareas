@@ -33,8 +33,36 @@ class UsuarioModel
 
         return $this->db->registers();
     }
+/**
+     * Lista todos los usuarios sin admin  
+    */
 
+    public function listarUsuariosSinAdmin()
+{
+    $this->db->query(
+        "SELECT
+            usuario.id,
+            usuario.nombre,
+            usuario.apellido,
+            usuario.email,
+            usuario.avatar,
+            usuario.rol_id,
+            rol.nombre AS rol,
+            (SELECT COUNT(*)
+             FROM tarea
+             WHERE tarea.fk_id_usuario = usuario.id
+             AND tarea.deleted_at IS NULL
+             AND tarea.fk_id_estado IN (1, 2)) AS tareas_activas
+         FROM usuario
+         INNER JOIN rol
+            ON rol.id = usuario.rol_id
+         WHERE usuario.deleted_at IS NULL
+         AND usuario.rol_id <> 1
+         ORDER BY usuario.nombre"
+    );
 
+    return $this->db->registers();
+}
     /**
      *Segun rol del usuario tiene permiso ?
      */
@@ -120,7 +148,7 @@ class UsuarioModel
                 AND tarea.fk_id_estado <> 3) AS tareas_activas
          FROM usuario
          INNER JOIN rol ON rol.id = usuario.rol_id
-         WHERE usuario.deleted_at IS NULL
+         WHERE usuario.deleted_at IS NULL AND usuario.rol_id <> 1
          ORDER BY usuario.nombre"
     );
 
