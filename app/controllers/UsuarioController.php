@@ -47,7 +47,7 @@ class UsuarioController extends BaseController
         if (($_GET['para'] ?? '') === 'equipo') {
             $usuarios = $this->usuarioModel->listarUsuariosParaEquipo();
         } else {
-            $usuarios = $this->usuarioModel->listarUsuarios();
+            $usuarios = $this->usuarioModel->listarUsuariosSinAdmin();
         }
 
         $this->jsonResponse([

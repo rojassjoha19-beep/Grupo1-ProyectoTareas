@@ -50,7 +50,14 @@ class EquipoController extends BaseController
             ], 403);
         }
 
-        $equipos = $this->equipoModel->equiposDelUsuario($usuario_id);
+       
+        $usuario = $this->usuarioModel->buscarUsuario($usuario_id);
+
+        if ($usuario && (int)$usuario->rol_id === 1) {
+            $equipos = $this->equipoModel->todosLosEquipos();
+        } else {
+            $equipos = $this->equipoModel->equiposDelUsuario($usuario_id);
+        }
 
         $this->jsonResponse([
             'ok' => true,
