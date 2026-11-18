@@ -73,8 +73,24 @@ export const createTareaTemplate = () => {
                                     name="expired_at"
                                 >
                             </div>
+                            <div id="grupoAsignar" class="mb-3 d-none">
+                            <div class="mb-3">
+                                <label for="id_equipo" class="form-label">Equipo</label>
+                                <select id="id_equipo" class="form-select">
+                                    <option value="">Sin equipo (para mí)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_usuario" class="form-label">Asignar a</label>
+                                <select id="id_usuario" class="form-select" disabled>
+                                    <option value="">Seleccioná un equipo primero</option>
+                                </select>
+                            </div>
+                        
+                           
                         </div>
-        <!-- Se quitó el selector de estado: el backend asigna el estado inicial -->
+                      <!-- Se quitó el selector de estado: el backend asigna el estado inicial -->
         
                         <div class="modal-footer">
                             <button
