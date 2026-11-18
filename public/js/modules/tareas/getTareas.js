@@ -18,15 +18,24 @@ export const getTareas = async (idEstado = 0, fechaVencimiento = "") => {
             throw new Error("No se pudieron obtener las tareas.");
         }
 
-        tablaBody.innerHTML = tableTareaTemplate(
-            response.tareas || [],
-        );
+         let tareas = response.tareas || [];
+
+         //Mostrar solo para el lider
+        const idEmpleado = document.getElementById("filtroEmpleado")?.value;
+        if (idEmpleado) {
+            tareas = tareas.filter(
+                (t) => String(t.id_asignado) === idEmpleado,
+            );
+        }
+
+        tablaBody.innerHTML = tableTareaTemplate(tareas);
+
     } catch (error) {
         console.error("Error al obtener tareas:", error);
 
         tablaBody.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center py-4 text-danger">
+                <td colspan="8" class="text-center py-4 text-danger">
                     Error al cargar las tareas.
                 </td>
             </tr>

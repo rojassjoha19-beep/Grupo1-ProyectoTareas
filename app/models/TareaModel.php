@@ -37,7 +37,8 @@ public function buscarTareas($id_estado = 0, $fecha_vencimiento = null, $ver_tod
                 tarea.expired_at,
                 estado.tipoEstado,
                 estado.color,
-                CONCAT(usuario.nombre, ' ', usuario.apellido) AS asignado_nombre
+                CONCAT(usuario.nombre, ' ', usuario.apellido) 
+                AS asignado_nombre, tarea.fk_id_usuario AS id_asignado
             FROM tarea
             INNER JOIN estado
                 ON estado.id_estado = tarea.fk_id_estado
