@@ -80,16 +80,13 @@ export const liderDashboardTemplate = () => `
             </div>
 
             <div class="col-12 col-md-4">
-                <label for="filtroEstadoEquipo" class="form-label">
+                <label for="selectFiltroEstado" class="form-label">
                     Filtrar por estado
                 </label>
 
-                <select id="filtroEstadoEquipo" class="form-select">
+                <select id="selectFiltroEstado" class="form-select">
                     <option value="">Todos los estados</option>
-                    <option value="1">ToDo</option>
-                    <option value="2">En curso</option>
-                    <option value="3">Finalizada</option>
-                    <option value="4">Vencida</option>
+                    
                 </select>
             </div>
 
@@ -107,7 +104,9 @@ export const liderDashboardTemplate = () => `
                             <tr>
                                 <th class="ps-4">#</th>
                                 <th>Título</th>
-                                <th>Asignado a</th>
+                                <th>Descripción</th>
+                                <th>Asignada a</th>
+                                <th>Fecha de Alta</th>
                                 <th>Vencimiento</th>
                                 <th>Estado</th>
                                 <th class="text-center pe-4">
@@ -116,9 +115,9 @@ export const liderDashboardTemplate = () => `
                             </tr>
                         </thead>
 
-                        <tbody id="tablaTareasEquipoBody">
+                        <tbody id="tablaTareasBody">
                             <tr>
-                                <td colspan="6" class="text-center py-4">
+                                <td colspan="8" class="text-center py-4">
                                     Cargando tareas del equipo...
                                 </td>
                             </tr>

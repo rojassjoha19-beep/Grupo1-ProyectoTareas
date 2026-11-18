@@ -72,6 +72,7 @@ export const tareasAdminTemplate = () => `
                                 <th class="ps-4">#</th>
                                 <th>Título</th>
                                 <th>Descripción</th>
+                                 <th>Asignada a</th> 
                                 <th>Fecha de Alta</th>
                                 <th>Vencimiento</th>
                                 <th>Estado</th>

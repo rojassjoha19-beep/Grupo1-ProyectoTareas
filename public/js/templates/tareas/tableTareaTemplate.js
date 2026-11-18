@@ -26,7 +26,7 @@ export const tableTareaTemplate = (tareas) => {
     if (!tareas || tareas.length === 0) {
         return `
             <tr>
-                <td colspan="7" class="text-center py-4 text-muted">
+                <td colspan="8" class="text-center py-4 text-muted">
                     <i class="fas fa-inbox fa-2x mb-2 d-block text-gray-300"></i>
                     No se encontraron tareas registradas
                 </td>
@@ -51,6 +51,10 @@ export const tableTareaTemplate = (tareas) => {
                             tarea.descripcion ||
                             '<em class="text-black-50">Sin descripción</em>'
                         }
+                    </td>
+
+                    <td>
+                        ${tarea.asignado_nombre || "-"}
                     </td>
 
                     <td>
