@@ -148,7 +148,7 @@ class UsuarioModel
                 AND tarea.fk_id_estado <> 3) AS tareas_activas
          FROM usuario
          INNER JOIN rol ON rol.id = usuario.rol_id
-         WHERE usuario.deleted_at IS NULL
+         WHERE usuario.deleted_at IS NULL AND usuario.rol_id <> 1
          ORDER BY usuario.nombre"
     );
 
