@@ -6,6 +6,7 @@ class TareaController extends BaseController
     private $estadoModel;
     private $equipoMiembroModel;
     private $permisoModel;
+     private $usuarioModel;
 
     public function __construct()
     {
@@ -13,6 +14,7 @@ class TareaController extends BaseController
         $this->estadoModel = $this->model('EstadoModel');
         $this->equipoMiembroModel = $this->model('EquipoMiembroModel');
         $this->permisoModel = $this->model('PermisoModel');
+        $this->usuarioModel = $this->model('UsuarioModel');
     }
 
     /** Devuelve el id del usuario logueado, o responde 401. */
@@ -148,6 +150,14 @@ class TareaController extends BaseController
     public function store()
     {
         $usuario_id = $this->requireSesion();
+
+         if (!$this->usuarioModel->tienePermiso($usuario_id, 'tareas.crear')) {
+            $this->jsonResponse([
+                'ok' => false,
+                'mensaje' => 'No tenés permiso para crear tareas.'
+            ], 403);
+        }
+
         $datos = $this->getJsonBody();
 
         $titulo = trim($datos['titulo'] ?? '');
