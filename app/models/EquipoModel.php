@@ -266,7 +266,7 @@ class EquipoModel
             return false;
         }
     }
-    public function todosLosEquipos()
+  public function todosLosEquipos()
 {
     $this->db->query(
         "SELECT
@@ -283,7 +283,11 @@ class EquipoModel
             (SELECT COUNT(*) FROM tarea
               WHERE tarea.equipo_id = equipo.id
                 AND tarea.deleted_at IS NULL
-                AND tarea.fk_id_estado = 3) AS tareas_finalizadas
+                AND tarea.fk_id_estado = 3) AS tareas_finalizadas,
+            (SELECT COUNT(*) FROM tarea
+              WHERE tarea.equipo_id = equipo.id
+                AND tarea.deleted_at IS NULL
+                AND tarea.fk_id_estado = 4) AS tareas_vencidas
          FROM equipo
          INNER JOIN usuario ON usuario.id = equipo.lider_id
          ORDER BY equipo.nombre"
@@ -292,34 +296,6 @@ class EquipoModel
     return $this->db->registers();
 }
 
-//     /**
-//  * Todos los equipos con líder, integrantes y tareas (para el admin).
-//  */
-//     public function todosLosEquipos()
-//     {
-//         $this->db->query(
-//             "SELECT
-//                 equipo.id,
-//                 equipo.nombre,
-//                 equipo.lider_id,
-//                 0 AS es_lider,
-//                 usuario.nombre AS lider_nombre,
-//                 usuario.apellido AS lider_apellido,
-//                 (SELECT COUNT(*) FROM equipo_usuario
-//                 WHERE equipo_usuario.equipo_id = equipo.id) AS integrantes,
-//                 (SELECT COUNT(*) FROM tarea
-//                 WHERE tarea.equipo_id = equipo.id
-//                 AND tarea.deleted_at IS NULL) AS tareas,
-//                 (SELECT COUNT(*) FROM tarea
-//                 WHERE tarea.equipo_id = equipo.id
-//                 AND tarea.deleted_at IS NULL
-//                 AND tarea.fk_id_estado = 3) AS tareas_finalizadas
-//             FROM equipo
-//             INNER JOIN usuario ON usuario.id = equipo.lider_id
-//             ORDER BY equipo.nombre"
-//         );
-
-//         return $this->db->registers();
-//     }
-
 }
+
+
