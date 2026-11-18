@@ -39,8 +39,8 @@ export const renderUsuariosAdminDashBoard = async (container) => {
     const puedeEditar = usuario?.permisos?.includes("usuarios.editar") ?? false;
 
     try {
-        // Obtener usuarios
-        const response = await equiposService.listarUsuarios();
+        // Obtener usuarios (con equipos y tareas activas)
+        const response = await equiposService.listarUsuariosAdmin();
 
         console.log("Respuesta usuarios ADMIN:", response);
 
@@ -84,56 +84,46 @@ export const renderUsuariosAdminDashBoard = async (container) => {
             USER: "Miembro"
         }[rol] ?? rol);
 
-        // Obtener equipo
-        const obtenerEquipo = (u) =>
-            u.equipo_nombre ??
-            (typeof u.equipo === "string"
-                ? u.equipo
-                : u.equipo?.nombre) ??
-            "";
-
-        // Comprobar si la API devuelve información de equipos
-        const hayDatosEquipo = usuarios.every(u =>
-            Object.hasOwn(u, "equipo_id") ||
-            Object.hasOwn(u, "equipo_nombre") ||
-            Object.hasOwn(u, "equipo")
+        // Equipos que vienen del back (id -> nombre)
+        const listaEquipos = response.equipos ?? [];
+        const nombreEquipoPorId = Object.fromEntries(
+            listaEquipos.map(e => [String(e.id), e.nombre])
         );
+
+        // "4,5,6" -> ["4","5","6"]
+        const idsEquipos = (u) =>
+            u.equipos_ids ? String(u.equipos_ids).split(",") : [];
+
+        // Texto de la columna Equipo
+        const obtenerEquipo = (u) =>
+            idsEquipos(u)
+                .map(id => nombreEquipoPorId[id])
+                .filter(Boolean)
+                .join(", ");
 
         // Actualizar estadísticas
         const actualizarEstadisticas = () => {
 
             container.querySelector("#totalUsuarios").textContent =
-                usuarios.length;
+                usuarios.filter(u => obtenerRol(u) !== "ADMIN").length;
 
             container.querySelector("#totalLideres").textContent =
-                usuarios.filter(
-                    u => obtenerRol(u) === "LEADER"
-                ).length;
+                usuarios.filter(u => obtenerRol(u) === "LEADER").length;
 
             container.querySelector("#totalMiembros").textContent =
-                usuarios.filter(
-                    u => obtenerRol(u) === "USER"
-                ).length;
+                usuarios.filter(u => obtenerRol(u) === "USER").length;
 
             container.querySelector("#totalSinAsignar").textContent =
-                hayDatosEquipo
-                    ? usuarios.filter(u =>
-                        u.equipo_id == null && !obtenerEquipo(u)
-                    ).length
-                    : "—";
+                usuarios.filter(u =>
+                    obtenerRol(u) !== "ADMIN" && Number(u.total_equipos) === 0
+                ).length;
         };
 
         // Cargar filtro de equipos
-        const equipos = [
-            ...new Set(
-                usuarios.map(obtenerEquipo).filter(Boolean)
-            )
-        ];
-
-        equipos.forEach(equipo => {
+        listaEquipos.forEach(e => {
             const option = document.createElement("option");
-            option.value = equipo;
-            option.textContent = equipo;
+            option.value = e.id;
+            option.textContent = e.nombre;
             filtroEquipo.appendChild(option);
         });
 
@@ -213,8 +203,7 @@ export const renderUsuariosAdminDashBoard = async (container) => {
                     u.id ?? "—",
                     u.nombre ?? "—",
                     nombreRol(obtenerRol(u)),
-                    obtenerEquipo(u) ||
-                        (hayDatosEquipo ? "Sin asignar" : "—"),
+                    obtenerEquipo(u) || "Sin asignar",
                     u.tareas_activas ?? "—"
                 ];
 
@@ -272,7 +261,7 @@ export const renderUsuariosAdminDashBoard = async (container) => {
                     !rol || obtenerRol(u) === rol;
 
                 const coincideEquipo =
-                    !equipo || obtenerEquipo(u) === equipo;
+                    !equipo || idsEquipos(u).includes(equipo);
 
                 return coincideRol && coincideEquipo;
             });
