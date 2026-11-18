@@ -62,7 +62,7 @@ export const liderEquiposTemplate = () => `
                                 <th>Nombre del equipo</th>
                                 <th>Integrantes</th>
                                 <th class="text-center pe-4">
-                                    Acciones
+                                    Tareas
                                 </th>
                             </tr>
                         </thead>

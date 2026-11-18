@@ -46,15 +46,21 @@ export const renderLiderEquipos = async (container) => {
             return;
         }
 
+        const escapar = (texto) =>
+            String(texto ?? "").replace(/[&<>"']/g, (c) => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            }[c]));
+
         tbody.innerHTML = equipos.map((equipo, i) => `
             <tr>
                 <td class="ps-4">${i + 1}</td>
-                <td>${(equipo.nombre)}</td>
-                <td>-</td>
-                <td class="text-center pe-4">-</td>
+                <td>${escapar(equipo.nombre)}</td>
+                <td>${Number(equipo.integrantes ?? 0)}</td>
+                <td class="text-center pe-4">${Number(equipo.tareas ?? 0)} </td>
             </tr>`).join("");
 
     } catch (error) {
         console.error("Error al cargar los equipos:", error);
-        mostrarMensaje(tbody, "Error al cargar los equipos");};
+        mostrarMensaje(tbody, "Error al cargar los equipos");
+    }
 };

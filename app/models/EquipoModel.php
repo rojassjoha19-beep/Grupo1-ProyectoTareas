@@ -11,7 +11,7 @@ class EquipoModel
     }
 
     /**
-     * Obtiene todos los equipos donde pertenece el usuario.
+     * Obtiene todos los equipos donde pertenece el usuario. + subconsultas 
      */
     public function equiposDelUsuario($usuario_id)
     {
@@ -20,8 +20,12 @@ class EquipoModel
                 equipo.id,
                 equipo.nombre,
                 equipo.lider_id,
-                (equipo.lider_id = :id_lider) AS es_lider
-            
+                (equipo.lider_id = :id_lider) AS es_lider,
+             (SELECT COUNT(*) FROM equipo_usuario
+             WHERE equipo_usuario.equipo_id = equipo.id) AS integrantes,
+            (SELECT COUNT(*) FROM tarea
+             WHERE tarea.equipo_id = equipo.id
+             AND tarea.deleted_at IS NULL) AS tareas
             FROM equipo
              INNER JOIN equipo_usuario
                 ON equipo_usuario.equipo_id = equipo.id
